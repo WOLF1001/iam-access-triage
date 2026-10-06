@@ -1,0 +1,187 @@
+# =============================================================================
+# policy.yaml — детермінований policy engine.
+# LLM НЕ обирає маршрут. LLM лише витягує структуру (тип, app-згадки, сигнали).
+# Маршрут = max(severity) по всіх правилах, що спрацювали + базовий маршрут типу.
+# Будь-яка неоднозначність / помилка → fail-closed (вгору по спектру, не вниз).
+# =============================================================================
+version: 1
+
+# --- Спектр маршрутів (severity: більше = більше людини) ---------------------
+routes:
+  DOCS_REDIRECT:
+    severity: 0
+    desc: "Відповідь уже існує (KB/Notion). Бот дає посилання + коротку відповідь. Жодної дії."
+  AUTO_RESOLVE:
+    severity: 1
+    desc: "Бот виконує дію сам. ЛИШЕ allowlist дій × low-risk app × verified requester == subject."
+  REROUTE:
+    severity: 1
+    desc: "Не IAM. Бот перенаправляє у правильну чергу (helpdesk / finance / HR / security / procurement)."
+  NEED_INFO:
+    severity: 2
+    desc: "Бракує даних для рішення. Бот ставить конкретні уточнювальні питання. Нічого не виконує."
+  APPROVAL_GATED:
+    severity: 3
+    desc: "Бот готує дію (dry-run план), апрувер погоджує кнопкою у Slack, тоді виконується."
+  HUMAN_REVIEW:
+    severity: 4
+    desc: "IAM-інженер вирішує. Бот готує контекст (read-side факти, ризики, чернетку), але не діє."
+  SECURITY_ESCALATION:
+    severity: 5
+    desc: "Інцидент / потенційна атака / секрети. Пейдж людини негайно. Бот нічого не змінює."
+
+# --- Базовий маршрут за типом запиту (до застосування hard-rules) ----------
+type_base_route:
+  how_to:              DOCS_REDIRECT
+  policy_question:     DOCS_REDIRECT
+  access_request:      APPROVAL_GATED     # далі може знизитись до AUTO лише для birthright / allowlist
+  invite_resend:       AUTO_RESOLVE
+  login_diagnostic:    AUTO_RESOLVE       # AUTO = read-only діагностика + чернетка, без змін
+  license_request:     APPROVAL_GATED
+  license_issue:       HUMAN_REVIEW
+  limits_quota:        APPROVAL_GATED
+  billing_finance:     REROUTE
+  api_key_request:     APPROVAL_GATED
+  secret_incident:     SECURITY_ESCALATION
+  offboarding:         HUMAN_REVIEW
+  onboarding:          HUMAN_REVIEW
+  integration_connector: HUMAN_REVIEW
+  security_policy_change: HUMAN_REVIEW
+  data_export:         HUMAN_REVIEW
+  credential_reset:    DOCS_REDIRECT      # тільки self-service; reset через чат — ніколи
+  usage_report:        HUMAN_REVIEW
+  project_work:        HUMAN_REVIEW       # міграції доменів, DMARC — це не тікет, а планова робота
+  not_iam:             REROUTE
+  unclear:             NEED_INFO
+
+# --- Hard rules: спрацьовують на сигналах, піднімають маршрут (ніколи не знижують)
+# signal → мінімальний маршрут + reason_id. Сигнали приходять з 3 джерел:
+#   text   — детермінований детектор (regex) по тексту звернення
+#   llm    — витягнуто LLM (позначається, бо це НЕПЕРЕВІРЕНИЙ сигнал)
+#   read   — read-side факт з Okta/HRIS/1Password/GWS моків
+hard_rules:
+  - signal: secret_compromise
+    min_route: SECURITY_ESCALATION
+    reason: "Скомпрометований секрет → спершу revoke/rotate у провайдера, потім розслідування. Видалення запису у 1Password НЕ відкликає ключ і знищує слід."
+  - signal: secret_in_message
+    min_route: SECURITY_ESCALATION
+    reason: "Секрет опубліковано у повідомленні/треді Slack → вважаємо скомпрометованим: видалити повідомлення, ротувати. До LLM текст пішов уже відредагованим."
+  - signal: suspicious_auth_activity
+    min_route: SECURITY_ESCALATION
+    reason: "Read-side (Okta System Log): серія невдалих входів / блокування з підозрілих IP. Це не 'глюк доступу', а можлива атака на акаунт."
+  - signal: security_finding
+    min_route: SECURITY_ESCALATION
+    reason: "Знахідка пентесту/вразливість — не IAM-тікет, але не можна загубити. Негайно в security."
+  - signal: offboarding
+    min_route: HUMAN_REVIEW
+    priority: P1
+    reason: "Деструктивна і термінова дія. Потрібне підтвердження з HRIS (status/termination date). Бот готує dry-run план відкликання по всіх джерелах."
+  - signal: hris_bypass
+    min_route: HUMAN_REVIEW
+    reason: "Запит обходить HRIS як джерело правди (людини ще немає в HRM). Класичний вектор соціальної інженерії + сироти-акаунти."
+  - signal: mirror_access
+    min_route: HUMAN_REVIEW
+    reason: "'Дай як у X' — копіювання прав = over-granting. Права видаються під задачу, не під людину."
+  - signal: broad_scope
+    min_route: HUMAN_REVIEW
+    reason: "Широкий скоуп ('всі', 'на всіх спейсах', 'повний пакет') — розбиваємо на мінімальні entitlement'и вручну."
+  - signal: privileged_access
+    min_route: HUMAN_REVIEW
+    reason: "Адмін/привілейована роль. Ніколи не авто; потрібен власник ресурсу + обґрунтування + строк."
+  - signal: credential_reset
+    min_route: DOCS_REDIRECT
+    reason: "Скидання пароля/MFA через чат — вектор атаки на хелпдеск. Тільки Okta self-service або верифікація особи людиною."
+  - signal: shared_credential
+    min_route: HUMAN_REVIEW
+    reason: "Спільний логін/пароль → немає персональної ідентичності, аудиту та відкликання. Потрібне рішення по app, а не видача ще одного шеру."
+  - signal: pii_request
+    min_route: HUMAN_REVIEW
+    reason: "Запит персональних даних (контакти, HR-статус, ID). Бот не розкриває PII; потрібна правова підстава."
+  - signal: security_policy_change
+    min_route: HUMAN_REVIEW
+    reason: "Зміна org-wide політики безпеки (напр. always-allow для MCP) — рішення security, не тікет."
+  - signal: third_party_connector
+    min_route: HUMAN_REVIEW
+    reason: "Новий конектор/інтеграція = новий потік даних назовні. Потрібен security review (scope токенів, де зберігаються дані)."
+  - signal: external_party
+    min_route: HUMAN_REVIEW
+    reason: "Підрядник/зовнішня сторона: потрібні договір, NDA, власник у компанії, строк дії доступу."
+  - signal: financial_data
+    min_route: APPROVAL_GATED
+    reason: "Доступ до фінансових даних — апрув власника ресурсу обов'язковий."
+  - signal: payment_action
+    min_route: REROUTE
+    reason: "Оплата/поповнення/карта — finance + бюджет-власник, не IAM."
+  - signal: unverified_approval_claim
+    min_route: APPROVAL_GATED
+    reason: "'Лід в курсі' у тексті ≠ апрув. Апрув фіксується лише дією апрувера в системі."
+  - signal: on_behalf
+    min_route: APPROVAL_GATED
+    reason: "Requester ≠ subject. Потрібна згода/апрув щодо суб'єкта доступу."
+  - signal: approver_unavailable
+    min_route: HUMAN_REVIEW
+    reason: "Апрувер недоступний (за HRIS — відпустка). Делегат має бути визначений людиною, не ботом."
+  - signal: critical_resource
+    min_route: HUMAN_REVIEW
+    reason: "Ресурс з risk_tier=critical (секрети, платіжні дані, HRIS) — видача тільки людиною, навіть з апрувом."
+  - signal: requester_not_verified
+    min_route: HUMAN_REVIEW
+    reason: "Requester не знайдений як активний у HRIS/Okta або це зовнішній Slack Connect користувач."
+  - signal: source_conflict
+    min_route: HUMAN_REVIEW
+    reason: "Джерела суперечать одне одному (напр. Okta active, HRIS terminated). Немає SoT → рішення за людиною."
+  - signal: regrant_needed
+    min_route: APPROVAL_GATED
+    reason: "Діагностика показала, що доступ зняли легітимно (напр. group rule після зміни відділу). Повернення = нова видача → апрув власника."
+  - signal: missing_critical_data
+    min_route: NEED_INFO
+    reason: "Немає ключових даних (app / суб'єкт / список людей / скоуп). Не вгадуємо."
+  - signal: unknown_app
+    min_route: NEED_INFO
+    reason: "App не змаплено на каталог. Не вгадуємо entitlement."
+  - signal: low_confidence
+    min_route: HUMAN_REVIEW
+    reason: "Класифікатор не впевнений (confidence < поріг) → fail-closed."
+  - signal: multi_intent
+    min_route: null          # не піднімає сам по собі; кожен sub-request маршрутизується окремо
+    reason: "Кілька запитів в одному. Розбито на sub-requests; загальний маршрут = найсуворіший."
+
+# --- Сигнали-модифікатори: впливають на пріоритет/ризик, але НЕ знижують перевірки
+risk_modifiers:
+  urgency:
+    effect: "priority += 1; risk += 1"
+    note: "Терміновість ≠ дозвіл пропустити перевірки. У поєднанні з credential_reset/hris_bypass — індикатор соц. інженерії."
+  prompt_pressure:
+    effect: "risk += 1"
+    note: "Спроба продиктувати боту, як діяти ('не шли доки', 'просто видай')."
+  cost_impact:
+    effect: "потрібен бюджет-власник у ланцюгу апруву"
+
+# --- AUTO_RESOLVE: allowlist. Усе, чого тут немає, — не авто. -----------------
+auto_allowlist:
+  actions:
+    - id: resend_invite
+      desc: "Повторно надіслати вже погоджений інвайт (idempotent)."
+      preconditions: [requester_is_subject, requester_active_hris, invite_previously_approved]
+    - id: add_birthright_group
+      desc: "Додати в Okta-групу, яка є birthright для всіх активних співробітників (напр. VPN)."
+      preconditions: [requester_is_subject, requester_active_hris, app_birthright]
+    - id: readonly_diagnostic
+      desc: "Read-only діагностика входу (Okta System Log, assignments) + чернетка відповіді."
+      preconditions: [requester_is_subject]
+  forbidden_always:
+    - delete_secret
+    - reset_password
+    - reset_mfa
+    - grant_admin
+    - modify_org_policy
+    - share_vault
+    - deprovision_user
+    - export_personal_data
+
+# --- Пороги -----------------------------------------------------------------
+thresholds:
+  llm_min_confidence: 0.7        # нижче → low_confidence → HUMAN_REVIEW
+  max_subjects_auto: 1           # більше 1 суб'єкта → не авто
+  approval_ttl_hours: 72         # апрув протухає
+  temp_access_default_days: 30   # дефолтний строк для неперманентних доступів

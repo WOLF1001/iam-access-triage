@@ -1,0 +1,118 @@
+{
+  "_meta": {
+    "system": "Slack (mock)",
+    "mechanism": "users.info по event.user (НЕ display name); перевірка team_id і is_stranger (Slack Connect)",
+    "trust": "лише ідентифікує автора повідомлення; email → join з HRIS/Okta"
+  },
+  "home_team_id": "T0CORP",
+  "users": {
+    "U01": {
+      "email": "olena.marchenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U02": {
+      "email": "sofia.lysenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U03": {
+      "email": "taras.bondar@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U05": {
+      "email": "maksym.tkachenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U06": {
+      "email": "dmytro.savchuk@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U08": {
+      "email": "kateryna.shevchenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U09": {
+      "email": "roman.hnatiuk@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U10": {
+      "email": "yulia.petrenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U11": {
+      "email": "vlad.moroz@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U12": {
+      "email": "nadia.romanenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U13": {
+      "email": "ihor.kostenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U14": {
+      "email": "bohdan.zaitsev@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U15": {
+      "email": "alina.vasylenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U16": {
+      "email": "marta.oliinyk@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U17": {
+      "email": "serhii.lytvyn@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "U18": {
+      "email": "pavlo.danylenko@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    },
+    "UX1": {
+      "email": "pm@vendor-studio.example",
+      "team_id": "T9VENDOR",
+      "is_stranger": true,
+      "is_restricted": false
+    },
+    "UGEN": {
+      "email": "generic.employee@corp.example",
+      "team_id": "T0CORP",
+      "is_stranger": false,
+      "is_restricted": false
+    }
+  }
+}

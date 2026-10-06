@@ -1,0 +1,6 @@
+{
+  "_meta": {"system": "Approval log (mock)", "mechanism": "записи про апруви, зафіксовані кнопкою в Slack (approver_id, timestamp, scope, ttl)"},
+  "approvals": {
+    "APR-2026-0912": {"subject": "sofia.lysenko@corp.example", "app": "asana", "role": "member", "approved_by": "vlad.moroz@corp.example", "approved_at": "2026-09-29T08:25:00Z", "via": "slack_button"}
+  }
+}

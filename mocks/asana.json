@@ -1,0 +1,6 @@
+{
+  "_meta": {"system": "Asana (mock)", "mechanism": "Asana API: workspace memberships, pending invites; act: resend invite"},
+  "pending_invites": {
+    "sofia.lysenko@corp.example": {"workspace": "Product", "invited_at": "2026-09-29T08:30:00Z", "expired": true, "approval_ref": "APR-2026-0912", "invited_by": "vlad.moroz@corp.example"}
+  }
+}

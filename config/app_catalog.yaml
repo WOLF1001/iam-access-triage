@@ -1,0 +1,573 @@
+# =============================================================================
+# app_catalog.yaml — каталог застосунків / entitlement'ів.
+# Це головний "не-LLM" артефакт: без нього бот не має права нічого мапити.
+# LLM повертає лише сирі згадки ("клод", "табло"), мапінг на app — детермінований
+# (алиаси, найдовший збіг). Немає збігу → unknown_app → NEED_INFO. Не вгадуємо.
+#
+# Поля:
+#   sso:            okta | google | none          — де живе автентифікація
+#   read_side:      механізм, звідки беремо сигнали (assignments / usage / status)
+#   act_side:       механізм, яким (теоретично) виконується дія; у прототипі — mock
+#   provisioning:   okta_group | scim | app_api | manual
+#   approval:       none | manager | owner | manager+owner | security
+#   risk_tier:      low | medium | high | critical
+#   birthright:     true → видається всім активним співробітникам без апруву
+#   cost:           true → платна ліцензія/usage → у ланцюг апруву додається бюджет-власник
+#   least_privilege_role: роль за замовчуванням, якщо скоуп не вказано
+#   nuance:         практичні граблі (з досвіду / доків), які впливають на рішення
+#
+# Власники — вигадані ролі (dataset знеособлений).
+# =============================================================================
+version: 1
+
+apps:
+  okta:
+    name: Okta
+    aliases: [okta, окта, окту, окті, окти]
+    category: identity
+    sso: okta
+    read_side: "Okta API: /api/v1/users, /groups, /apps/{id}/users, System Log /api/v1/logs; Event Hooks (user.lifecycle.*, group.user_membership.*)"
+    act_side: "Okta API (OAuth 2.0 service app, scoped okta.groups.manage) — лише membership у дозволених групах"
+    provisioning: okta_group
+    approval: none
+    risk_tier: high
+    birthright: true
+    cost: false
+    owner: iam-team
+    kb: [okta-what-is, okta-self-service-reset]
+    nuance:
+      - "API-токен (SSWS) успадковує права адміна, що його створив, і живе від його імені. Для бота — OAuth service app з мінімальними scope + custom admin role на resource set лише з 'запитуваних' груп."
+      - "Rate limits — per-endpoint і per-org; обов'язково читати X-Rate-Limit-Remaining / Reset, бекофф на 429."
+      - "System Log — найкращий read-side сигнал для діагностики входу (outcome.reason, client.ipAddress, policy evaluation)."
+
+  onepassword:
+    name: 1Password
+    aliases: [1password, 1pass, 1пасворд, ванпасворд, 1password-і]
+    category: secrets
+    sso: okta
+    read_side: "1Password Events API (signinattempts, itemusages, auditevents); SCIM bridge для users/groups"
+    act_side: "НІЯКИХ авто-дій над vault/items. Share vault / delete item — тільки людина."
+    provisioning: scim
+    approval: owner
+    risk_tier: critical
+    birthright: true
+    cost: true
+    owner: iam-team
+    kb: [onepassword-start]
+    nuance:
+      - "Events API дає item usage — це єдиний usage-сигнал для non-SSO shared-кредів (хто відкривав item), але не доводить, що людина реально логінилась у сервіс."
+      - "Видалення item ≠ відкликання секрету. При компрометації: revoke у провайдера → новий секрет → оновити item → розслідування по itemusages."
+      - "Service accounts мають обмеження на типи vault'ів і зміну доступів після створення — перевірити актуальні доки перед дизайном act-side."
+
+  google_workspace:
+    name: Google Workspace
+    aliases: [google workspace, gws, корп пошт, корпоративн пошт, пошту, пошта, гугл драйв, драйв, gmail]
+    category: productivity
+    sso: okta
+    read_side: "Admin SDK Directory API (users, groups), Reports API (login, token — видно сторонні OAuth-апки = shadow SaaS)"
+    act_side: "Directory API через service account з domain-wide delegation (мінімальні scopes)"
+    provisioning: scim
+    approval: manager
+    risk_tier: high
+    birthright: true
+    cost: true
+    owner: it-helpdesk
+    kb: [gws-2fa]
+    nuance:
+      - "Domain-wide delegation — фактично impersonation будь-кого в домені в межах scope. Scopes мінімальні, ключ SA — у секрет-менеджері, ротація."
+      - "Reports API має затримку (години) — не годиться для real-time рішень, тільки для аудиту/діагностики."
+
+  slack:
+    name: Slack
+    aliases: [slack, слак, слаці, слаку]
+    category: communication
+    sso: okta
+    read_side: "Slack SCIM API (Business+/Enterprise), users.info (is_restricted, is_stranger для Slack Connect)"
+    act_side: "SCIM / admin.* API (Enterprise Grid)"
+    provisioning: scim
+    approval: none
+    risk_tier: medium
+    birthright: true
+    cost: true
+    owner: it-helpdesk
+    kb: [slack-login]
+    nuance:
+      - "Повідомлення боту можуть прийти від Slack Connect (зовнішніх) користувачів — requester треба верифікувати по team_id/is_stranger, а не по display name."
+
+  vpn:
+    name: Corporate VPN
+    aliases: [vpn, впн]
+    category: network
+    sso: okta
+    read_side: "Okta group membership 'vpn-users'"
+    act_side: "Okta: add user to group 'vpn-users' (birthright)"
+    provisioning: okta_group
+    approval: none
+    risk_tier: low
+    birthright: true
+    cost: false
+    owner: it-infra
+    okta_group: vpn-users
+    kb: [vpn-connect]
+
+  claude_org:
+    name: Claude (organization, Team/Enterprise)
+    aliases: [клод, клоді, клода, claude, клод-код, claude code, клауд]
+    category: ai_tool
+    sso: okta
+    read_side: "Claude admin console / Admin API (members, seats, usage) — read-only"
+    act_side: "Admin API / SCIM (Enterprise); зміна seat-типу, extra usage — через бюджет-власника"
+    provisioning: scim
+    approval: manager
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: ai-platform-owner
+    least_privilege_role: standard_seat
+    kb: [claude-org-permissions, claude-connectors-policy]
+    nuance:
+      - "Seat-апгрейди та extra usage — це гроші, не доступ: апрув бюджет-власника, а не лише менеджера."
+      - "Конектори/MCP — окремий security-review: токени конекторів дають моделі доступ до даних сторонніх систем."
+
+  anthropic_api:
+    name: Anthropic API (Console)
+    aliases: [claude api, anthropic api, anthropic console, клод апі]
+    category: ai_api
+    sso: google
+    read_side: "Anthropic Admin API (workspaces, api keys metadata, usage/cost)"
+    act_side: "Ключ створюється в окремому workspace команди з spend limit; видача ключа — через 1Password item, не в Slack"
+    provisioning: app_api
+    approval: manager+owner
+    risk_tier: high
+    birthright: false
+    cost: true
+    owner: ai-platform-owner
+    kb: [api-key-process]
+    nuance:
+      - "Ключ ніколи не пишеться в Slack/тікет. Тільки 1Password item у vault команди."
+
+  gemini_api:
+    name: Gemini API (Google AI Studio / Vertex)
+    aliases: [gemini api, ai studio, vertex]
+    category: ai_api
+    sso: google
+    read_side: "GCP IAM policy проєкту, API keys API (метадані), billing export"
+    act_side: "Ключ у GCP-проєкті команди з API restrictions + budget alert"
+    provisioning: app_api
+    approval: manager+owner
+    risk_tier: high
+    birthright: false
+    cost: true
+    owner: ai-platform-owner
+    kb: [api-key-process]
+    nuance:
+      - "API key без restrictions = секрет, що дає білінг на весь проєкт. Обмежувати по API та (де можна) по IP/referrer."
+      - "Квоти та ліміти — на рівні проєкту, а не людини: 'у колеги не закінчується' часто = різні проєкти/акаунти."
+
+  gemini_workspace:
+    name: Gemini (Workspace app)
+    aliases: [gemini, geminі, джеміні]
+    category: ai_tool
+    sso: okta
+    read_side: "GWS Admin: ліцензії Gemini add-on"
+    act_side: "GWS license assignment"
+    provisioning: app_api
+    approval: manager
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: it-helpdesk
+    kb: []
+
+  openai:
+    name: ChatGPT / OpenAI
+    aliases: [гпт, gpt, chatgpt, openai]
+    category: ai_tool
+    sso: okta
+    read_side: "Workspace admin / Admin API (members, usage)"
+    act_side: "SCIM (Enterprise) / admin console"
+    provisioning: scim
+    approval: manager
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: ai-platform-owner
+    kb: [ai-limits-process]
+
+  airtable:
+    name: Airtable
+    aliases: [airtable, ейртейбл]
+    category: productivity
+    sso: okta
+    read_side: "Airtable Enterprise API (users, workspace collaborators) — лише на Enterprise Scale"
+    act_side: "Collaborator invite через web API; SCIM лише на Enterprise"
+    provisioning: app_api
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: ops-owner
+    kb: [airtable-claude-pat]
+    nuance:
+      - "PAT-токени — персональні, скоуп задається вручну; при підключенні до AI-тулів давати лише read-scope на конкретні бази."
+
+  asana:
+    name: Asana
+    aliases: [asana, асана, асані, асану]
+    category: productivity
+    sso: okta
+    read_side: "Asana API: users, workspace memberships, pending invites; SCIM (Enterprise)"
+    act_side: "Asana API: resend invite / add to project (mock)"
+    provisioning: scim
+    approval: owner
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: pm-office
+    kb: [asana-private-project]
+
+  notion:
+    name: Notion
+    aliases: [notion, ноушн]
+    category: productivity
+    sso: okta
+    read_side: "Notion SCIM API (Enterprise), audit log"
+    act_side: "SCIM"
+    provisioning: scim
+    approval: owner
+    risk_tier: medium
+    birthright: true
+    cost: true
+    owner: it-helpdesk
+    kb: [notion-api-limits]
+    nuance:
+      - "Rate limit публічного API (~3 req/s у середньому на інтеграцію) не залежить від тарифу — апгрейд плану його не піднімає. Перевіряти актуальні доки."
+
+  coda:
+    name: Coda
+    aliases: [coda, кода]
+    category: productivity
+    sso: okta
+    read_side: "Coda admin / SCIM (Enterprise)"
+    act_side: "manual"
+    provisioning: manual
+    approval: owner
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: ops-owner
+    kb: [coda-claude-mcp]
+
+  tableau:
+    name: Tableau
+    aliases: [tableau, табло]
+    category: analytics
+    sso: okta
+    read_side: "Okta app assignment + Tableau REST API (site users, site role)"
+    act_side: "Okta group → SCIM у Tableau Cloud (site role за групою)"
+    provisioning: okta_group
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: data-team-lead
+    okta_group: tableau-viewers
+    least_privilege_role: Viewer
+    kb: []
+    nuance:
+      - "Site role 'Viewer' дешевший за Creator/Explorer — запит 'хочу read-only' = зниження вартості, а не лише прав."
+      - "Доступ часто зникає через group rule по department: зміна відділу в HRIS → Okta rule прибирає з групи (mover-кейс)."
+
+  bigquery:
+    name: BigQuery (GCP)
+    aliases: [bigquery, бігквері, біг квері]
+    category: data
+    sso: google
+    read_side: "GCP IAM policy, Cloud Monitoring quota metrics, INFORMATION_SCHEMA.JOBS"
+    act_side: "Зміна квот/резервацій — тільки власник проєкту (cost)"
+    provisioning: app_api
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: data-team-lead
+    kb: [bigquery-quotas]
+    nuance:
+      - "Більшість 'лімітів' BQ — це custom quotas на query bytes/day per user або per project, не IAM. Підняття = рішення по витратах."
+
+  growthbook:
+    name: GrowthBook
+    aliases: [growthbook, гроусбук]
+    category: product
+    sso: okta
+    read_side: "Okta app assignment"
+    act_side: "Okta group"
+    provisioning: okta_group
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: false
+    owner: product-analytics-lead
+    kb: []
+    nuance:
+      - "Права на зміну feature flags = вплив на прод. 'Колеги вже мають' не є обґрунтуванням ролі."
+
+  n8n:
+    name: n8n
+    aliases: [n8n]
+    category: automation
+    sso: okta
+    read_side: "n8n public API (users) — Enterprise; інакше manual"
+    act_side: "manual invite"
+    provisioning: manual
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: false
+    owner: automation-owner
+    kb: []
+    nuance:
+      - "n8n зберігає credentials усіх інтеграцій. Доступ до інстансу ≈ доступ до цих кредів (залежно від ролі/sharing). Тому risk high, а не 'просто інвайт'."
+
+  make:
+    name: Make
+    aliases: [make.com, мейк, make]
+    category: automation
+    sso: none
+    read_side: "немає надійного (organization members через UI)"
+    act_side: "manual"
+    provisioning: manual
+    approval: security
+    risk_tier: high
+    birthright: false
+    cost: true
+    owner: automation-owner
+    kb: []
+
+  adobe_cc:
+    name: Adobe Creative Cloud
+    aliases: [adobe, адоб, creative cloud]
+    category: creative
+    sso: okta
+    read_side: "Adobe User Management API (product profiles, license assignment)"
+    act_side: "UMAPI: assign product profile"
+    provisioning: app_api
+    approval: manager
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: creative-lead
+    kb: []
+
+  speechify:
+    name: Speechify
+    aliases: [speechify, спічіфай]
+    category: ai_tool
+    sso: none
+    read_side: "немає API; лише 1Password item як проксі (shared?)"
+    act_side: "manual (invite в team plan)"
+    provisioning: manual
+    approval: manager
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: content-lead
+    kb: []
+
+  transcription_tool:
+    name: Call transcription tool
+    aliases: [транскрибац, transcription]
+    category: ai_tool
+    sso: okta
+    read_side: "Okta app assignment"
+    act_side: "Okta group"
+    provisioning: okta_group
+    approval: manager
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: ops-owner
+    kb: [transcription-tool]
+    nuance:
+      - "Тула має доступ до записів дзвінків (потенційно PII/комерційні дані партнерів) — risk не low."
+
+  ai_dubbing_tool:
+    name: AI dubbing tool
+    aliases: [дабінг, дубляж, dubbing]
+    category: ai_tool
+    sso: none
+    read_side: "usage/credits через API провайдера (якщо є)"
+    act_side: "поповнення — finance"
+    provisioning: manual
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: localization-lead
+    kb: []
+
+  sensor_tower:
+    name: Sensor Tower
+    aliases: [sensor tower, сенсор тавер]
+    category: market_intel
+    sso: none
+    read_side: "немає SSO/SCIM; 1Password items як проксі; admin UI"
+    act_side: "manual"
+    provisioning: manual
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: marketing-intel-lead
+    kb: [market-intel-access]
+
+  market_intel_remote_env:
+    name: Market-intel remote environment (shared spy-tools VDI)
+    aliases: [market-intel, маркет-інтел, spy тул, spy-тул, віддалене середовище, віддаленого компа]
+    category: market_intel
+    sso: okta
+    read_side: "Okta app assignment до VDI; всередині — спільні акаунти тулів (без персональної ідентичності)"
+    act_side: "Okta group для VDI; ліцензії тулів — manual"
+    provisioning: okta_group
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: true
+    owner: marketing-intel-lead
+    kb: [market-intel-access]
+    nuance:
+      - "Спільні акаунти всередині VDI: немає персонального аудиту, відкликання = зміна пароля для всіх. Це архітектурний ризик, не тікет."
+
+  meta_business_manager:
+    name: Meta Business Manager
+    aliases: [meta business, business manager, бізнес менеджер, рекламного business manager, рекламним кабінетом, рекламний кабінет, фб акаунт, facebook, фб]
+    category: ads
+    sso: none
+    read_side: "Graph API: business users, assigned assets (з system user токеном)"
+    act_side: "Graph API: assign user to asset with role — manual у прототипі"
+    provisioning: app_api
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: false
+    owner: performance-marketing-lead
+    least_privilege_role: "Analyst (view performance)"
+    kb: [meta-bm-invite]
+    nuance:
+      - "Користувачі BM прив'язані до ОСОБИСТИХ facebook-акаунтів — відновлення входу у FB IAM не робить; але особистий акаунт з доступом до рекламних кабінетів = ризик захоплення."
+      - "Фінансові показники/billing — окремі права; 'з усіма фін показниками' = підвищений рівень."
+
+  tiktok_business_center:
+    name: TikTok Business Center / Ads analytics
+    aliases: [tiktok, тікток]
+    category: ads
+    sso: none
+    read_side: "Business Center API (members)"
+    act_side: "manual"
+    provisioning: manual
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: false
+    owner: performance-marketing-lead
+    least_privilege_role: Analyst
+    kb: []
+
+  app_store_connect:
+    name: App Store Connect / TestFlight
+    aliases: [app store connect, app store, стор-консол, testflight, тестові білди, ios, apple id]
+    category: mobile_release
+    sso: none
+    read_side: "App Store Connect API: users, user access by app, beta testers"
+    act_side: "ASC API: invite user з роллю і обмеженням по app; add beta tester"
+    provisioning: app_api
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: false
+    owner: mobile-release-lead
+    least_privilege_role: "Customer Support (відповіді на відгуки) / App Manager для конкретної app"
+    kb: [store-review-access]
+    nuance:
+      - "Користувача можна обмежити конкретними apps; API-ключі (team keys) — ні, вони діють на рівні команди. 'Менеджерський ключ до однієї app' може виявитись ключем до всіх — перевірити в доках і пояснити запитувачу."
+      - "Спільний корпоративний Apple ID для TestFlight = shared credential; правильно — персональні акаунти в ASC."
+
+  google_play_console:
+    name: Google Play Console
+    aliases: [play console, google play, android, плей консол]
+    category: mobile_release
+    sso: google
+    read_side: "Play Console users/permissions (Play Developer API — users)"
+    act_side: "invite user з app-level permissions"
+    provisioning: app_api
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: false
+    owner: mobile-release-lead
+    least_privilege_role: "app-level: Reply to reviews / View app information"
+    kb: [store-review-access]
+
+  payment_platform:
+    name: Payment platform (disputes)
+    aliases: [платіжк, payment, диспут]
+    category: finance
+    sso: none
+    read_side: "немає надійного; dashboard team members"
+    act_side: "manual"
+    provisioning: manual
+    approval: manager+owner
+    risk_tier: critical
+    birthright: false
+    cost: false
+    owner: finance-lead
+    kb: []
+    nuance:
+      - "Диспути = доступ до платіжних даних клієнтів (PCI-скоуп). 'На всіх спейсах' — broad scope."
+
+  legal_docs_tool:
+    name: Legal docs tool
+    aliases: [лігал, legal]
+    category: legal
+    sso: none
+    read_side: "немає; 1Password item як проксі"
+    act_side: "manual"
+    provisioning: manual
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: true
+    owner: legal-lead
+    kb: []
+
+  internal_support_tool:
+    name: Internal support tool
+    aliases: [інструменті сапорту, сапорт тул, support tool]
+    category: internal
+    sso: okta
+    read_side: "Okta app assignment"
+    act_side: "Okta group (role-based)"
+    provisioning: okta_group
+    approval: owner
+    risk_tier: high
+    birthright: false
+    cost: false
+    owner: support-lead
+    kb: []
+
+  hris:
+    name: HRIS
+    aliases: [hrm, hris, hr-систем, hr систем]
+    category: hr
+    sso: okta
+    read_side: "HRIS REST API (polling + diff; SCIM немає) — status, start/termination date, manager, department, leave"
+    act_side: "НІЯКИХ дій. HRIS — read-only джерело."
+    provisioning: manual
+    approval: security
+    risk_tier: critical
+    birthright: false
+    cost: false
+    owner: hr-ops
+    kb: []
+    nuance:
+      - "Без SCIM: polling з diff по updated_at; дати у локальних TZ різних юрисдикцій → нормалізувати в UTC, інакше offboarding спрацює на день раніше/пізніше."

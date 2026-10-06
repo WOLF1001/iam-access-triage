@@ -1,0 +1,165 @@
+# =============================================================================
+# kb.yaml — mock бази знань (у проді: Notion database, синхронізована/індексована).
+# Бот перенаправляє ЛИШЕ на статті, що тут існують. Він не генерує інструкцію
+# "з голови": LLM може переформулювати, але джерело відповіді — стаття.
+# URL — заглушки (notion.example), реальних посилань немає.
+# =============================================================================
+version: 1
+
+articles:
+  okta-what-is:
+    title: "Що таке Okta і як нею користуватись"
+    url: https://notion.example/iam/okta-what-is
+    summary: "Okta — єдиний вхід у робочі сервіси. Заходиш на корпоративний Okta-портал корпоративною поштою, підтверджуєш вхід в Okta Verify і бачиш плитки всіх доступних тобі застосунків."
+    keywords: [що таке окта, як зайти в окту, okta що це, зайти у окту]
+
+  okta-self-service-reset:
+    title: "Скидання пароля / MFA в Okta (self-service)"
+    url: https://notion.example/iam/okta-self-service-reset
+    summary: "Пароль скидається самостійно через «Forgot password?» на сторінці входу Okta з підтвердженням через Okta Verify. Якщо Okta Verify втрачено — тільки через верифікацію особи з IT (відеодзвінок), не через чат."
+    keywords: [скинути пароль, reset password, забув пароль, вибило, релогін]
+
+  mfa-android:
+    title: "Налаштування MFA (Okta Verify) на Android"
+    url: https://notion.example/iam/mfa-android
+    summary: "Встанови Okta Verify з Google Play → у профілі Okta відкрий Security Methods → Set up Okta Verify → відскануй QR."
+    keywords: [mfa андроїд, okta verify, двофакторка телефон]
+
+  gws-2fa:
+    title: "2FA для корпоративної пошти"
+    url: https://notion.example/iam/gws-2fa
+    summary: "Вхід у корп. пошту йде через Okta, тому 2FA = Okta Verify. Окремо в Google нічого вмикати не треба."
+    keywords: [2fa пошта, двофакторка пошта]
+
+  vpn-connect:
+    title: "Корпоративний VPN: підключення"
+    url: https://notion.example/iam/vpn-connect
+    summary: "Встанови клієнт VPN, вхід через Okta. Доступ видається автоматично всім активним співробітникам (група vpn-users)."
+    keywords: [vpn, впн, інструкція vpn, як підключитись до vpn]
+
+  onepassword-start:
+    title: "1Password: старт"
+    url: https://notion.example/iam/1password-start
+    summary: "Вхід у 1Password через Okta. Personal vault — для своїх кредів, shared vaults — видає власник vault через IAM-запит. Секрети не пересилаємо в Slack."
+    keywords: [1password інструкція, як працювати з 1pass]
+
+  claude-org-permissions:
+    title: "Claude: як влаштовані права в організації"
+    url: https://notion.example/iam/claude-org-permissions
+    summary: "Ролі (Owner/Admin/Member), типи seat'ів і ліміти задаються на рівні організації. Апгрейд seat / extra usage — через запит з апрувом бюджет-власника."
+    keywords: [права в клоді, організація клода, спейси клод, теги клод]
+
+  claude-connectors-policy:
+    title: "Claude: політика конекторів / MCP"
+    url: https://notion.example/iam/claude-connectors-policy
+    summary: "Нові конектори додаються лише після security review. Always-allow на рівні організації вимкнено свідомо. Конектор може вимикатись після закінчення OAuth-токена — перепідключи його; якщо повторюється — заявка в IAM."
+    keywords: [конектор клод, mcp клод, always-allow]
+
+  airtable-claude-pat:
+    title: "Airtable ↔ Claude через PAT"
+    url: https://notion.example/iam/airtable-claude-pat
+    summary: "Створи Personal Access Token в Airtable з мінімальними scope (data.records:read) лише на потрібні бази. Не давай write-scope без потреби. Токен зберігай в 1Password."
+    keywords: [airtable pat, airtable клод]
+
+  coda-claude-mcp:
+    title: "Coda ↔ Claude через MCP"
+    url: https://notion.example/iam/coda-claude-mcp
+    summary: "Підключення через погоджений конектор; токен Coda з read-only доступом до потрібних доків."
+    keywords: [coda mcp, coda клод]
+
+  asana-private-project:
+    title: "Asana: приватний проєкт"
+    url: https://notion.example/iam/asana-private-project
+    summary: "Create project → Privacy: Private to members → додай ліда як member."
+    keywords: [приватний проект асана]
+
+  slack-login:
+    title: "Вхід у Slack"
+    url: https://notion.example/iam/slack-login
+    summary: "Вхід у Slack — через «Sign in with Okta» на сторінці воркспейсу."
+    keywords: [авторизуватись у слак, вхід слак]
+
+  access-request-process:
+    title: "Як працюють запити на доступ і хто апрувить"
+    url: https://notion.example/iam/access-request-process
+    summary: "Запит → бот визначає систему і роль → апрув менеджера та/або власника ресурсу кнопкою в Slack → видача. Апрув у тексті повідомлення ('лід в курсі') не рахується."
+    keywords: [як працює апрув, хто підтверджує, процес доступів]
+
+  notion-api-limits:
+    title: "Notion API: ліміти"
+    url: https://notion.example/iam/notion-api-limits
+    summary: "Rate limit Notion API (~3 запити/с на інтеграцію в середньому) однаковий для всіх тарифів — апгрейд плану його не підніме. Рішення — батчинг, черга з ретраями на 429."
+    keywords: [ліміти notion api, notion api тариф, лімітах notion api]
+
+  store-review-access:
+    title: "Відповіді на відгуки в сторах: доступи"
+    url: https://notion.example/iam/store-review-access
+    summary: "App Store Connect: персональний користувач з роллю Customer Support на конкретну app. Google Play: app-level permission 'Reply to reviews'. Ключі API для цього не потрібні."
+    keywords: [відгуки в сторах, reply to reviews]
+
+  api-key-process:
+    title: "API-ключі до AI-моделей: процес"
+    url: https://notion.example/iam/api-key-process
+    summary: "Ключ створюється в проєкті/workspace команди зі spend limit. Потрібні: модель/провайдер, команда, призначення, власник ключа. Апрув: лід + власник AI-платформи. Видача — через 1Password, ніколи в Slack."
+    keywords: [api ключ, api-ключ, токени до моделі]
+
+  ai-limits-process:
+    title: "Ліміти AI-тулів: як підняти"
+    url: https://notion.example/iam/ai-limits-process
+    summary: "Підняття ліміту = витрати. Потрібні: хто, скільки, навіщо, на який строк. Апрув: лід + бюджет-власник."
+    keywords: [підняти ліміт, ліміти гпт, ліміти клода]
+
+  bigquery-quotas:
+    title: "BigQuery: квоти та ліміти"
+    url: https://notion.example/iam/bigquery-quotas
+    summary: "Більшість лімітів — custom quotas проєкту (bytes/day). Помилка 'quota exceeded' містить назву квоти — скинь її. Підняття — рішення власника проєкту."
+    keywords: [ліміт bigquery, квота bigquery]
+
+  meta-bm-invite:
+    title: "Meta Business Manager: інвайти"
+    url: https://notion.example/iam/meta-bm-invite
+    summary: "Прийми інвайт з особистого FB-акаунта з увімкненою 2FA; ролі на активи видає власник BM. Відновлення особистого FB-акаунта — тільки через Meta."
+    keywords: [meta business інвайт, фб акаунт]
+
+  market-intel-access:
+    title: "Market-intel тули: як отримати доступ"
+    url: https://notion.example/iam/market-intel-access
+    summary: "Доступ до spy/market-intel тулів — через віддалене середовище (VDI) з входом через Okta. Запит — з назвою конкретної тули та обґрунтуванням."
+    keywords: [market-intel, віддалене середовище]
+
+  transcription-tool:
+    title: "Тула транскрибації дзвінків"
+    url: https://notion.example/iam/transcription-tool
+    summary: "Корпоративна підписка є. Доступ — запит в IAM з апрувом ліда."
+    keywords: [транскрибація]
+
+# Куди перенаправляємо НЕ-IAM запити
+reroute_queues:
+  helpdesk:
+    name: "IT Helpdesk"
+    channel: "#it-helpdesk"
+    covers: "техніка, периферія, ОС, віддалений робочий стіл, сервісні пошти"
+  security:
+    name: "Security"
+    channel: "#security-incidents"
+    covers: "інциденти, пентест, вразливості, фішинг"
+  finance:
+    name: "Finance / Budget"
+    channel: "#finance-requests"
+    covers: "оплати, поповнення, карти, тарифи"
+  hr:
+    name: "HR Ops"
+    channel: "#hr-ops"
+    covers: "статуси співробітників, HR-дані"
+  procurement:
+    name: "Procurement"
+    channel: "#procurement"
+    covers: "ціни, знижки, нові ліцензії/вендори"
+  infra:
+    name: "IT Infra (planned work)"
+    channel: "#it-infra"
+    covers: "міграції доменів, DMARC, проєктні роботи"
+  personal:
+    name: "Особисто IAM-інженеру (не тікет)"
+    channel: "DM"
+    covers: "робоча комунікація, анонси, координація"

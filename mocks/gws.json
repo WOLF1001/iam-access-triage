@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "system": "Google Workspace (mock)",
+    "mechanism": "Admin SDK Directory API (users, groups) через service account з domain-wide delegation; Reports API (token audit — сторонні OAuth apps)",
+    "trust": "пошта/групи/диск; Reports API із затримкою"
+  },
+  "users": {
+    "andrii.koval@corp.example": {"suspended": false, "groups": ["marketing@", "ads-alerts@"], "drive_owned_files": 412, "oauth_third_party_apps": ["Make", "Unknown Chrome extension (drive.readonly)"]}
+  }
+}

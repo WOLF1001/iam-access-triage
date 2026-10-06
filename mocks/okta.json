@@ -1,0 +1,268 @@
+{
+  "_meta": {
+    "system": "Okta (mock)",
+    "mechanism": "read: GET /api/v1/users?search=profile.email, /users/{id}/groups, /users/{id}/appLinks, /api/v1/logs; Event Hooks для lifecycle. act: POST /groups/{gid}/users/{uid} (лише allowlisted групи)",
+    "trust": "джерело SSO-призначень; НЕ знає про non-SSO SaaS і локальні акаунти всередині сервісів",
+    "snapshot_at": "2026-10-06T07:45:00Z"
+  },
+  "users": {
+    "olena.marchenko@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-marketing"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "notion"
+      ]
+    },
+    "sofia.lysenko@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-product",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "notion",
+        "asana"
+      ]
+    },
+    "taras.bondar@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-analytics",
+        "vpn-users",
+        "tableau-viewers"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "tableau"
+      ]
+    },
+    "iryna.kravets@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-analytics",
+        "vpn-users",
+        "tableau-creators",
+        "bigquery-admins",
+        "growthbook-editors",
+        "gws-drive-analytics-owners"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "tableau",
+        "bigquery",
+        "growthbook",
+        "airtable",
+        "anthropic_api"
+      ]
+    },
+    "maksym.tkachenko@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-marketing",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword"
+      ]
+    },
+    "dmytro.savchuk@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-localization",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "ai_dubbing_tool"
+      ]
+    },
+    "andrii.koval@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-marketing",
+        "vpn-users",
+        "meta-bm-analysts",
+        "market-intel-vdi"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "market_intel_remote_env",
+        "tableau",
+        "claude_org"
+      ]
+    },
+    "roman.hnatiuk@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-creative",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "adobe_cc"
+      ]
+    },
+    "yulia.petrenko@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-product",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword"
+      ]
+    },
+    "vlad.moroz@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-product",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword"
+      ]
+    },
+    "marta.oliinyk@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-creative",
+        "vpn-users"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "adobe_cc"
+      ]
+    },
+    "generic.employee@corp.example": {
+      "status": "ACTIVE",
+      "groups": [
+        "everyone",
+        "dept-product"
+      ],
+      "apps": [
+        "slack",
+        "google_workspace",
+        "onepassword",
+        "notion"
+      ]
+    }
+  },
+  "system_log": [
+    {
+      "published": "2026-10-05T09:12:41Z",
+      "eventType": "group.user_membership.remove",
+      "actor": "Okta Group Rule: dept-analytics → tableau-viewers",
+      "target": "maksym.tkachenko@corp.example",
+      "group": "tableau-viewers",
+      "outcome": "SUCCESS",
+      "reason": "HRIS department changed Analytics → Marketing; rule no longer matches"
+    },
+    {
+      "published": "2026-10-05T09:12:42Z",
+      "eventType": "application.user_membership.remove",
+      "actor": "Okta",
+      "target": "maksym.tkachenko@corp.example",
+      "app": "tableau",
+      "outcome": "SUCCESS"
+    },
+    {
+      "published": "2026-10-04T19:02:11Z",
+      "eventType": "user.session.start",
+      "target": "roman.hnatiuk@corp.example",
+      "client_ip": "185.220.101.44",
+      "geo": "DE (Tor exit node)",
+      "outcome": "FAILURE",
+      "reason": "INVALID_CREDENTIALS"
+    },
+    {
+      "published": "2026-10-04T19:02:39Z",
+      "eventType": "user.session.start",
+      "target": "roman.hnatiuk@corp.example",
+      "client_ip": "185.220.101.44",
+      "geo": "DE (Tor exit node)",
+      "outcome": "FAILURE",
+      "reason": "INVALID_CREDENTIALS"
+    },
+    {
+      "published": "2026-10-04T19:03:05Z",
+      "eventType": "user.session.start",
+      "target": "roman.hnatiuk@corp.example",
+      "client_ip": "185.220.101.44",
+      "geo": "DE (Tor exit node)",
+      "outcome": "FAILURE",
+      "reason": "INVALID_CREDENTIALS"
+    },
+    {
+      "published": "2026-10-04T19:03:30Z",
+      "eventType": "user.account.lock",
+      "target": "roman.hnatiuk@corp.example",
+      "outcome": "SUCCESS",
+      "reason": "Exceeded failed password attempts"
+    },
+    {
+      "published": "2026-10-05T19:11:02Z",
+      "eventType": "user.session.start",
+      "target": "roman.hnatiuk@corp.example",
+      "client_ip": "185.220.101.44",
+      "geo": "DE (Tor exit node)",
+      "outcome": "FAILURE",
+      "reason": "INVALID_CREDENTIALS"
+    },
+    {
+      "published": "2026-10-05T19:11:30Z",
+      "eventType": "user.account.lock",
+      "target": "roman.hnatiuk@corp.example",
+      "outcome": "SUCCESS",
+      "reason": "Exceeded failed password attempts"
+    },
+    {
+      "published": "2026-10-05T19:40:12Z",
+      "eventType": "user.session.start",
+      "target": "roman.hnatiuk@corp.example",
+      "client_ip": "93.175.201.10",
+      "geo": "UA (residential)",
+      "outcome": "FAILURE",
+      "reason": "LOCKED_OUT"
+    }
+  ],
+  "groups_allowlisted_for_bot": [
+    "vpn-users"
+  ]
+}

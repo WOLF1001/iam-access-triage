@@ -1,0 +1,58 @@
+# =============================================================================
+# Вибірка для e2e-демо. Тексти — 1:1 з data/requests.csv.
+# requester / thread — СИНТЕТИЧНІ: у CSV немає автора та треду, а без них
+# read-side перевірки неможливі. Це свідоме припущення прототипу.
+# why_picked — навіщо цей кейс у вибірці (який маршрут/сигнал демонструє).
+# =============================================================================
+received_at: "2026-10-06T08:00:00Z"
+cases:
+  - id: 91
+    requester: U01
+    why_picked: "AUTO: birthright-група (VPN) + інструкція"
+  - id: 104
+    requester: U02
+    why_picked: "AUTO: повторний інвайт, апрув уже був зафіксований раніше"
+  - id: 7
+    requester: U15
+    why_picked: "DOCS: відповідь існує; LLM схильна порадити апгрейд тарифу — це хибно"
+  - id: 51
+    requester: U14
+    why_picked: "REROUTE: не IAM (техніка)"
+  - id: 69
+    requester: U05
+    why_picked: "Діагностика read-side: доступ зняло Okta group rule після зміни відділу (mover) → повернення лише з апрувом"
+  - id: 42
+    requester: U09
+    why_picked: "Діагностика read-side: 'проблеми по вечорах' = блокування акаунта через спроби входу з Tor → SECURITY"
+  - id: 5
+    requester: U06
+    why_picked: "'лід в курсі' ≠ апрув; модель не вказана → NEED_INFO → APPROVAL"
+  - id: 95
+    requester: U10
+    why_picked: "Скидання пароля + терміновість → тільки self-service, жодного reset через чат"
+  - id: 46
+    requester: U03
+    why_picked: "Mirror access 'все що у ліда' + апрувер у відпустці (за HRIS, не за текстом)"
+  - id: 75
+    requester: U11
+    why_picked: "Обхід HRIS: 'у HRM ще не внесли' + 'повний пакет' + асап"
+  - id: 92
+    requester: U08
+    thread: "Андрій Коваль (andrii.koval@corp.example), сьогодні останній день, заблокуйте все до кінця дня"
+    why_picked: "Offboarding: HRIS не підтверджує звільнення → конфлікт джерел; бот будує dry-run план, але не виконує"
+  - id: 32
+    requester: U12
+    thread: "ось цей ключ: sk-ant-api03-FAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE-AAAA, валявся в публічному репо"
+    why_picked: "Секрет у треді → редакція до LLM; бот відмовляється 'видалити нотатку', бо це не відкликає ключ"
+  - id: 85
+    requester: U13
+    why_picked: "Не IAM, але High-знахідка → SECURITY, не 'не до нас'"
+  - id: 26
+    requester: U17
+    why_picked: "Експорт PII (телефони) з Business Manager → HUMAN, бот не допомагає вивантажувати"
+  - id: 12
+    requester: U18
+    why_picked: "Зміна org-wide політики безпеки заради зручності → HUMAN/security"
+  - id: 29
+    requester: U16
+    why_picked: "Multi-intent: проблема з ліцензією + інвайт новенької колеги (on-behalf, без імені)"
