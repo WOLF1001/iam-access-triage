@@ -2,3 +2,7 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .env
+
+# Claude Code — приватне
+CLAUDE.local.md
+.claude/settings.local.json
