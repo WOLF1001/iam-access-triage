@@ -111,11 +111,11 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 | Прототип | `src/triage/` · `config/` (policy, каталог 37 застосунків) · `n8n/` · `docker-compose.yml` · `tools/stand.py` |
 | b. Демо на вибірці | [`demo/output.md`](demo/output.md) · [`demo/actions.log`](demo/actions.log) · [`demo/full_run.md`](demo/full_run.md) · запис — TODO(Loom) |
 | c. Критика й обмеження | [`docs/critique.md`](docs/critique.md) |
-| d. Робота з AI | [`AI_USAGE.md`](AI_USAGE.md) (де допомагав, де свідомо не пускав, де помилявся) · [`ai-artifacts/`](ai-artifacts/) |
+| d. Робота з AI | [`ai-artifacts/AI_USAGE.md`](ai-artifacts/AI_USAGE.md) (де допомагав, де свідомо не пускав, де помилявся) · [`ai-artifacts/`](ai-artifacts/) |
 | e. Досвід реальних інтеграцій | [`docs/real-integrations.md`](docs/real-integrations.md) |
 | Процес і ролі | [`docs/process/current-state.md`](docs/process/current-state.md) · [`docs/zones.md`](docs/zones.md) · [`docs/process/raci.md`](docs/process/raci.md) |
 | Експлуатація | [`kb/`](kb/README.md) (deflection-статті) · [`runbooks/`](runbooks/README.md) (AUTO-дії) · [`templates/human-handoff.md`](templates/human-handoff.md) |
-| Як колега розвиває без мене | [`CLAUDE.md`](CLAUDE.md) · [`docs/architecture.md`](docs/architecture.md) §8 (точки розширення: новий SaaS = запис у каталозі, без коду) |
+| Як колега розвиває без мене | [`ai-artifacts/claude-code/CLAUDE.md`](ai-artifacts/claude-code/CLAUDE.md) · [`docs/architecture.md`](docs/architecture.md) §8 (точки розширення: новий SaaS = запис у каталозі, без коду) |
 
 ## Час
 

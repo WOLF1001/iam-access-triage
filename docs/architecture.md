@@ -237,7 +237,7 @@ flowchart TD
 
 ## 5. Безпекова модель (стисло)
 
-Дев'ять золотих правил — у `CLAUDE.md`. Вони перевіряються тестами, а не лише задекларовані:
+Золоті правила — у [`ai-artifacts/claude-code/CLAUDE.md`](../ai-artifacts/claude-code/CLAUDE.md) (робочий контекст Claude Code). Вони перевіряються тестами, а не лише задекларовані:
 
 | Правило | Як перевірено |
 |---|---|
@@ -262,7 +262,7 @@ python tools/stand.py                                 # веб-стенд :8765
 colima start && docker compose up -d --build          # n8n :5678 + triage-сервіс
 ```
 
-Як колезі додати новий застосунок або правило — `CLAUDE.md` → «Робочий процес»:
+Як колезі додати новий застосунок або правило — [`ai-artifacts/claude-code/CLAUDE.md`](../ai-artifacts/claude-code/CLAUDE.md) → «Робочий процес»:
 
 1. правка `config/*.yaml`;
 2. `pytest`;

@@ -4,8 +4,13 @@ __pycache__/
 .env
 
 # Claude Code — приватне
-CLAUDE.local.md
+/CLAUDE.local.md
 .claude/settings.local.json
 .hypothesis/
 .venv/
 .DS_Store
+
+# Локальний робочий контекст Claude Code (копії для рев'юерів — у ai-artifacts/claude-code/)
+/CLAUDE.md
+/.claude/
+/TASK.md

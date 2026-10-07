@@ -1,7 +1,10 @@
+> **Копія робочого контексту Claude Code** для рев'юерів (локально лежить у корені репо, де його читає Claude Code).
+> Посилання `@TASK.md` — на копію тексту завдання, яку в репо не включено.
+
 # CLAUDE.md — iam-triage
 
 Контекст для Claude Code (і для колеги-інженера, який підхоплює проєкт).
-Повний текст завдання: @TASK.md · журнал прогресу: @docs/PROGRESS.md · ключові рішення: @docs/DECISIONS.md · зони: @docs/zones.md · ADR: docs/adr/
+Повний текст завдання: @TASK.md · журнал прогресу: @ai-artifacts/PROGRESS.md · ключові рішення: @docs/DECISIONS.md · зони: @docs/zones.md · ADR: docs/adr/
 
 ## Що це
 
@@ -67,10 +70,10 @@ python tools/export_kb_csv.py           # config/kb.yaml → notion/iam_kb.csv �
 - Новий кейс у демо → додати в `demo/sample.yaml` (з `why_picked`) і очікуваний маршрут у `EXPECTED` у `tests/test_policy.py`.
 - **Блок d (робота з AI) — частина здачі.** Якщо AI (ти) згенерував хибне правило/код/факт і це виявлено — додай рядок у `ai-artifacts/ai-mistakes.md` (що, як виявлено, як виправлено). Не причісуй історію.
 - Коміти — маленькі, по логічних кроках, з префіксами `feat:`, `fix:`, `docs:`, `ai:`, `test:`. Історія комітів сама є артефактом процесу.
-- Не вигадувати факти про API вендорів. Якщо не впевнений — позначити `TODO(verify)` і додати в `docs/PROGRESS.md` → «Перевірити в доках».
+- Не вигадувати факти про API вендорів. Якщо не впевнений — позначити `TODO(verify)` і додати в `ai-artifacts/PROGRESS.md` → «Перевірити в доках».
 - `cache/llm_cache.json` комітимо (для `--classifier replay` у рев'юерів).
 - `demo/sample.yaml`: requester і thread **синтетичні** (у CSV їх немає) — завжди зазначати це в документах.
 
 ## Стан і наступні кроки
 
-Див. @docs/PROGRESS.md — це живий файл, оновлюй його в кінці кожної сесії.
+Див. @ai-artifacts/PROGRESS.md — це живий файл, оновлюй його в кінці кожної сесії.

@@ -4,4 +4,4 @@ description: Прогнати тести і демо, показати, які �
 1. `pytest -q` — якщо щось червоне, зупинись і поясни, який інваріант порушено.
 2. `python run_demo.py --all`
 3. `git diff --stat demo/` і `git diff demo/full_run.md demo/output.md` — коротко перелічи звернення, у яких змінився маршрут, і чи це очікувано.
-4. Онови `docs/PROGRESS.md`, якщо щось завершено.
+4. Онови `ai-artifacts/PROGRESS.md`, якщо щось завершено.
