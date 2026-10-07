@@ -1,0 +1,443 @@
+{
+  "name": "IAM KB sync — Notion ⇄ triage",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Every 15 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "id": "50a93db7-700f-5ec6-8bc7-534d73c1d416"
+    },
+    {
+      "parameters": {},
+      "name": "Run now (manual)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        380
+      ],
+      "id": "64e3ee5f-1c24-5c36-b031-0cbb16ebeea5"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst databaseId = ($env.NOTION_KB_DATABASE_ID ?? '').replace(/-/g, '').trim();\nif (!/^[0-9a-f]{32}$/i.test(databaseId)) {\n  throw new Error('NOTION_KB_DATABASE_ID у .env не задано або невалідний (32 hex з URL бази)');\n}\nreturn [{ json: { databaseId } }];\n"
+      },
+      "name": "Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        290
+      ],
+      "id": "4c657017-d93b-56ae-aac3-b848810245c7"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.notion.com/v1/databases/{{ $json.databaseId }}",
+        "options": {
+          "timeout": 20000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        }
+      },
+      "name": "Notion: KB schema",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        290
+      ],
+      "id": "b14ff4fd-6472-5670-8343-9b65807576f3",
+      "credentials": {
+        "notionApi": {
+          "id": "eKke9qSoKNlCKqB1",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.notion.com/v1/databases/{{ $('Config').first().json.databaseId }}/query",
+        "options": {
+          "timeout": 20000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ page_size: 100 }) }}"
+      },
+      "name": "Notion: query KB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        200
+      ],
+      "id": "104dbe28-16bd-588c-b5d0-1dcbbbdfdb40",
+      "credentials": {
+        "notionApi": {
+          "id": "eKke9qSoKNlCKqB1",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Notion-сторінки → статті. Тип властивостей не припускаємо (CSV-імпорт дає text/select/status).\nconst plain = (p) => {\n  if (!p) return '';\n  switch (p.type) {\n    case 'title': return p.title.map(t => t.plain_text).join('');\n    case 'rich_text': return p.rich_text.map(t => t.plain_text).join('');\n    case 'select': return p.select?.name ?? '';\n    case 'status': return p.status?.name ?? '';\n    case 'multi_select': return p.multi_select.map(o => o.name).join(', ');\n    case 'date': return p.date?.start ?? '';\n    case 'url': return p.url ?? '';\n    default: return '';\n  }\n};\nconst res = $input.first().json;\nif (res.has_more) throw new Error('KB > 100 сторінок — потрібна пагінація; синк зупинено, лишається попередня KB');\nconst titleKey = Object.keys(res.results[0]?.properties ?? {}).find(k => res.results[0].properties[k].type === 'title');\nconst articles = res.results.filter(p => !p.archived && !p.in_trash).map(p => ({\n  article_id: plain(p.properties['article_id']),\n  title: plain(p.properties[titleKey]),\n  summary: plain(p.properties['Summary']),\n  keywords: plain(p.properties['Keywords']),\n  status: plain(p.properties['Status']),\n  url: p.url,\n}));\nreturn [{ json: { source: 'notion', articles } }];\n"
+      },
+      "name": "Map Notion → KB articles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        200
+      ],
+      "id": "792985c7-c2fc-58af-b7ec-5394ce884788"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://triage:8765/api/kb/sync",
+        "options": {
+          "timeout": 20000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-KB-Sync-Token",
+              "value": "={{ $env.KB_SYNC_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ source: 'notion', articles: $json.articles }) }}"
+      },
+      "name": "Triage: replace KB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        200
+      ],
+      "id": "9f252cc6-1532-542a-9489-15c0ddbf8b20",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// accepted / skipped_not_published / catalog_refs_missing — на останнє варто дивитись людині.\nreturn $input.all();\n"
+      },
+      "name": "Sync report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        120
+      ],
+      "id": "22a4771f-8a18-5f50-92ac-79e795ff58ff"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// 409 від сервісу (порожній/обрізаний/невалідний синк) → KB НЕ замінено, лишилась попередня. Людині — DM.\nconst e = $input.first().json.error ?? {};\nreturn [{ json: { dry_run: true, outbox: [{ api: 'chat.postMessage', channel: 'DM:iam-oncall',\n  text: `KB sync з Notion відхилено: ${String(e.message ?? e).slice(0, 300)}` }] } }];\n"
+      },
+      "name": "Sync rejected → alert IAM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        300
+      ],
+      "id": "ef0ca77c-1804-50f5-877b-e4ae85564494"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://triage:8765/api/kb/gaps",
+        "options": {
+          "timeout": 20000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-KB-Sync-Token",
+              "value": "={{ $env.KB_SYNC_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "name": "Triage: kb_gap backlog",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        420
+      ],
+      "id": "fdc07775-65e1-51c5-a22e-027b4d3bda1e"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn ($input.first().json.gaps ?? []).map(g => ({ json: g }));\n"
+      },
+      "name": "One item per gap",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        420
+      ],
+      "id": "b71f2f80-3245-54be-89a9-825f61a904a0"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "options": {
+          "timeout": 20000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const schema = $('Notion: KB schema').first().json.properties;\n  const val = (name, text) => {\n    const t = schema[name]?.type;\n    if (!t) return undefined;\n    if (t === 'title') return { title: [{ text: { content: text } }] };\n    if (t === 'rich_text') return { rich_text: [{ text: { content: text } }] };\n    if (t === 'select') return { select: { name: text } };\n    if (t === 'status') return { status: { name: text } };\n    return undefined;\n  };\n  const titleKey = Object.keys(schema).find(k => schema[k].type === 'title');\n  const props = {\n    [titleKey]: val(titleKey, `KB gap: ${$json.text.slice(0, 80)}`),\n    Summary: val('Summary', `Бот не знайшов статті (${$json.count}×, звернення ${$json.request_ids.join(', ') || '—'}). Відредагований текст: ${$json.text}`),\n    Status: val('Status', 'Draft'),\n    Owner: val('Owner', 'IAM'),\n  };\n  Object.keys(props).forEach(k => props[k] === undefined && delete props[k]);\n  return JSON.stringify({ parent: { database_id: $('Config').first().json.databaseId }, properties: props });\n})() }}"
+      },
+      "name": "Notion: create Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        420
+      ],
+      "id": "92a348e7-86db-552e-97fe-07ad995ada62",
+      "credentials": {
+        "notionApi": {
+          "id": "eKke9qSoKNlCKqB1",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://triage:8765/api/kb/gaps/ack",
+        "options": {
+          "timeout": 20000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-KB-Sync-Token",
+              "value": "={{ $env.KB_SYNC_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ gap_ids: [$('One item per gap').item.json.gap_id] }) }}"
+      },
+      "name": "Triage: ack gap",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        420
+      ],
+      "id": "3c5bff9a-f9f3-5ed7-a2ae-dc0052fa9beb"
+    },
+    {
+      "parameters": {
+        "width": 760,
+        "height": 420,
+        "color": 5,
+        "content": "## KB sync: Notion → triage-сервіс\n**Notion = джерело статей, не політики.** Бот бере лише `Status = Published`; DOCS лише на існуючий `article_id`.\n\n**Вгору (кожні 15 хв):** схема бази → усі сторінки → сервіс валідує (slug, https, без дублів) і **атомарно** замінює KB.\nПорожній/обрізаний синк (<50% поточних) → 409 → KB не чіпаємо, DM IAM (збій Notion не вимикає DOCS тихо).\n\n**Вниз:** `kb_gap` (бот не знайшов статті → людина) → Draft-сторінка в Notion = беклог KB. У Notion іде лише ВІДРЕДАГОВАНИЙ текст.\n\n**Секрети:** Notion-ключ — у n8n Credentials (додає людина). `KB_SYNC_TOKEN` — з env.\n**Ризик:** хто редагує Notion-базу, той пише відповіді бота → права на базу = як на код (review, історія змін)."
+      },
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -260
+      ],
+      "id": "264adc8b-839e-5c93-a490-f4fab7ff1e4b"
+    }
+  ],
+  "connections": {
+    "Every 15 min": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run now (manual)": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Notion: KB schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion: KB schema": {
+      "main": [
+        [
+          {
+            "node": "Notion: query KB",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Triage: kb_gap backlog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion: query KB": {
+      "main": [
+        [
+          {
+            "node": "Map Notion → KB articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Notion → KB articles": {
+      "main": [
+        [
+          {
+            "node": "Triage: replace KB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage: replace KB": {
+      "main": [
+        [
+          {
+            "node": "Sync report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sync rejected → alert IAM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage: kb_gap backlog": {
+      "main": [
+        [
+          {
+            "node": "One item per gap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per gap": {
+      "main": [
+        [
+          {
+            "node": "Notion: create Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion: create Draft": {
+      "main": [
+        [
+          {
+            "node": "Triage: ack gap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "active": false,
+  "id": "iamKbSyncNotion1"
+}

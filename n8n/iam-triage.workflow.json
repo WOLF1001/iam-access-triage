@@ -1,0 +1,687 @@
+{
+  "name": "IAM triage — Slack → policy → route",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "iam-triage",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Slack event (webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "id": "fcfbd348-ed01-5cc3-8857-65db159484c3",
+      "webhookId": "7d4d0b8e-5b6a-4a39-9d4e-1a2b3c4d5e6f"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Формат Slack Events API: { event_id, event: { user, text, channel, ts, thread_ts } }.\n// requester береться ЛИШЕ з event.user (підписано Slack), ніколи з тексту.\nconst b = $input.first().json.body ?? {};\nconst e = b.event ?? {};\nif (!e.text || !e.user) {\n  return [{ json: { valid: false, error: 'Очікується Slack event: { event: { user, text, channel, ts } }' } }];\n}\nreturn [{ json: {\n  valid: true,\n  event_id: b.event_id ?? null,\n  id: Number(b.request_id ?? 0),          // № з датасету — лише для демо\n  text: e.text,\n  requester: e.user,\n  thread: b.thread_context ?? null,        // у проді: conversations.replies(thread_ts)\n  channel: e.channel ?? 'C-IAM-HELP',\n  thread_ts: e.thread_ts ?? e.ts ?? null,\n  mode: 'rules',                           // клієнт не обирає класифікатор; LLM вмикається на сервісі\n}}];\n"
+      },
+      "name": "Normalize Slack event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        300
+      ],
+      "id": "42c14418-07e8-522c-90a9-69beb7c067eb"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://triage:8765/api/triage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread, mode: $json.mode }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "name": "Triage service (policy)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        300
+      ],
+      "id": "2345f3f0-ae5f-5846-8766-bc352393abec",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2feca474-47a8-50f2-900f-005c914fe5ab",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "DOCS_REDIRECT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "DOCS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b02d7785-c3b2-5d25-9a75-1f95a518fcdb",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "AUTO_RESOLVE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AUTO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cb0ee968-a971-5aab-ab1e-4ff282e6ba61",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "REROUTE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "REROUTE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a9f1645c-bf05-5ac4-a010-72f1e672d01d",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "NEED_INFO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NEED_INFO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9ef157b4-142e-5d85-8fff-1de6196624a5",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "APPROVAL_GATED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "APPROVAL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec6a65ce-4d64-5d43-b379-7fa36976d636",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "HUMAN_REVIEW",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HUMAN"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "793a5886-676f-5d03-9a70-289a039cc771",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "SECURITY_ESCALATION",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SECURITY"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "UNKNOWN → human"
+        }
+      },
+      "name": "Route",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        760,
+        260
+      ],
+      "id": "642c1fd0-5b4a-5d43-913f-fd41fc635283"
+    },
+    {
+      "parameters": {
+        "respondWith": "firstIncomingItem",
+        "options": {}
+      },
+      "name": "Respond (ack)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        300
+      ],
+      "id": "a1c81abd-281b-53b3-b1f9-53ae30cb9f78"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\nreturn done([reply]);"
+      },
+      "name": "Reply with KB link",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        -260
+      ],
+      "id": "b3fea452-48ba-5ee6-b873-bae8c0e5c57c"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\n// Дію вже виконав сервіс (симуляція, allowlist + read-side preconditions) — тут лише повідомлення.\nreturn done([reply]);"
+      },
+      "name": "Reply + allowlisted action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        -120
+      ],
+      "id": "70a019d2-3dae-5f62-b390-29ebb873e745"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nconst q = r.decisions.find(d => d.queue)?.queue ?? 'helpdesk';\nreturn done([reply, { api: 'chat.postMessage', channel: `#${q}`,\n  text: `Перенаправлено з IAM: «${r.redacted_text}» (тред ${ev.channel}/${ev.thread_ts})` }]);"
+      },
+      "name": "Forward to queue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        20
+      ],
+      "id": "73c3df4f-6977-528f-9884-7bd8328b55ef"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\n// Тред чекає відповіді автора; нове повідомлення в треді → цей самий воркфлоу з thread_context.\nreturn done([reply]);"
+      },
+      "name": "Ask clarifying questions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        160
+      ],
+      "id": "de4f72d8-d731-5415-b99b-d9c24305e2e8"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nconst d = r.decisions.find(x => x.route === 'APPROVAL_GATED' || x.next_route === 'APPROVAL_GATED');\nconst approvers = d?.approvers ?? [];\nconst value = JSON.stringify({ event_id: ev.event_id, app: d?.primary_app, requester: r.requester, approvers });\nreturn done([reply, ...approvers.map(a => ({\n  api: 'chat.postMessage', channel: `DM:${a}`,\n  text: `Запит на доступ: ${d?.primary_app ?? '?'} для ${r.requester}`,\n  blocks: [\n    { type: 'section', text: { type: 'mrkdwn', text: `*${r.requester}* просить *${d?.primary_app ?? '?'}*\\n>${r.redacted_text}` } },\n    { type: 'actions', elements: [\n      { type: 'button', style: 'primary', text: { type: 'plain_text', text: 'Approve' }, action_id: 'iam_approve', value },\n      { type: 'button', style: 'danger',  text: { type: 'plain_text', text: 'Deny' },    action_id: 'iam_deny',    value },\n    ]},\n  ],\n}))]);"
+      },
+      "name": "Request approval (Block Kit)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        300
+      ],
+      "id": "08c507fa-f291-5c82-9511-ddea86221cee"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'JSM: POST /rest/servicedeskapi/request', queue: 'iam-review', summary: r.redacted_text.slice(0, 120), description: r.internal_note },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: r.internal_note }]);"
+      },
+      "name": "Escalate to IAM engineer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        440
+      ],
+      "id": "45e12f77-d768-57fc-8bb8-caf340e9912c"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'chat.postMessage', channel: '#security', text: r.internal_note },\n  { api: 'PagerDuty Events v2: trigger', severity: 'critical', summary: `IAM triage: ${r.redacted_text.slice(0, 100)}` }]);"
+      },
+      "name": "Page security",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        580
+      ],
+      "id": "6112b9be-a1b4-5c8e-bb82-c463287bace8"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([{ ...reply, text: 'Передав запит IAM-інженеру.' },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: `Невідомий маршрут від сервісу: ${r.route}` }]);"
+      },
+      "name": "Unknown route → human",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        720
+      ],
+      "id": "86cd1c4e-78cf-5e60-bc07-188f15e425e3"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Fail-closed: сервіс рішень недоступний або повернув помилку → нічого не виконуємо, людина.\nconst ev = $('Normalize Slack event').first().json;\nreturn [{ json: { route: 'HUMAN_REVIEW', dry_run: true, event_id: ev.event_id, reason: 'triage_service_error',\n  outbox: [\n    { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: 'Передав запит IAM-інженеру. Відповідь буде в цьому треді.' },\n    { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: `triage-сервіс недоступний: ${String($input.first().json.error?.message ?? 'unknown error').slice(0, 200)}` },\n  ] } }];\n"
+      },
+      "name": "Triage unavailable → human",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        640
+      ],
+      "id": "04244e2f-ed1d-509b-836a-d1efc23b2d05"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ef3a37f7-a714-5a2e-b477-7b2e46216dcd",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Valid Slack event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        300
+      ],
+      "id": "55b50f55-459c-5db8-bf9d-7ee0dd4a341b"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: $json.error }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        480
+      ],
+      "id": "78dee538-74e1-5306-9aa0-da0377823f6c"
+    },
+    {
+      "parameters": {
+        "content": "## IAM triage — оркестрація в n8n\n**n8n** = канал і інтеграції. **triage-сервіс** = рішення (policy-as-code, `pytest`).\nn8n не вирішує маршрут — лише виконує те, що повернув сервіс.\n\n**Демо:** Webhook імітує Slack Events API. Усі вихідні виклики — `outbox` з `dry_run: true`.\n\n**Секрети:** n8n бачить СИРИЙ текст до редакції → збереження даних виконань вимкнено (settings воркфлоу + env інстансу).\n\n**Прод (чого тут немає):**\n- Slack Trigger замість Webhook: перевірка `X-Slack-Signature`, `url_verification`.\n- Slack чекає ack ~3 с, інакше ретраїть подію → відповідати одразу, обробляти асинхронно; дедуп за `event_id`.\n- Кнопки Approve/Deny → окремий воркфлоу (Slack interactivity): перевірити, що натиснув саме очікуваний апрувер, апрув → (subject, app, TTL).\n- Креди Okta/1Password на ЗАПИС — лише в окремому act-воркфлоу з allowlist; цей воркфлоу їх не має.",
+        "width": 760,
+        "height": 380,
+        "color": 5
+      },
+      "name": "Note: як це в проді",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -420
+      ],
+      "id": "c61f9ce5-14dd-50a8-9a8f-645f5b39007c"
+    },
+    {
+      "parameters": {
+        "content": "### Fail-closed\nСервіс недоступний / 4xx / 5xx / таймаут → гілка помилки HTTP-вузла → людина.\nНевідомий маршрут → fallback-вихід Switch → людина.",
+        "width": 520,
+        "height": 200,
+        "color": 3
+      },
+      "name": "Note: fail-closed",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        560
+      ],
+      "id": "330f1fee-867f-5c1c-82e6-c639398bec8e"
+    }
+  ],
+  "connections": {
+    "Route": {
+      "main": [
+        [
+          {
+            "node": "Reply with KB link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply + allowlisted action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Forward to queue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ask clarifying questions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Request approval (Block Kit)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate to IAM engineer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Page security",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown route → human",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply with KB link": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply + allowlisted action": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward to queue": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask clarifying questions": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request approval (Block Kit)": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate to IAM engineer": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page security": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unknown route → human": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack event (webhook)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Slack event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Slack event": {
+      "main": [
+        [
+          {
+            "node": "Valid Slack event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Slack event?": {
+      "main": [
+        [
+          {
+            "node": "Triage service (policy)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage service (policy)": {
+      "main": [
+        [
+          {
+            "node": "Route",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Triage unavailable → human",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage unavailable → human": {
+      "main": [
+        [
+          {
+            "node": "Respond (ack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false
+  },
+  "pinData": {},
+  "active": false,
+  "id": "iamTriageMain01"
+}

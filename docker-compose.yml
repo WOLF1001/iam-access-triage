@@ -1,0 +1,49 @@
+# Локальний стенд у їхньому стеку:
+#   n8n      — оркестратор (Slack trigger → HTTP → розгалуження за route → Slack/JSM)
+#   triage   — Python-сервіс рішень (той самий код, що й run_demo.py / pytest)
+# Обидва порти опубліковані лише на 127.0.0.1. n8n кличе сервіс як http://triage:8765.
+#
+#   docker compose up -d --build     → n8n: http://localhost:5678 · стенд: http://localhost:8765
+#   docker compose down              (дані n8n лишаються у volume n8n_data)
+services:
+  triage:
+    build: .
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      - ANTHROPIC_API_KEY          # прокидається з оточення хоста, якщо заданий; у файлах не зберігається
+      - ANTHROPIC_MODEL
+      - KB_SYNC_TOKEN=${KB_SYNC_TOKEN:?задай KB_SYNC_TOKEN у .env}   # хто пише KB — пише відповіді бота
+    volumes:
+      - triage_kb:/app/runtime     # остання успішно синхронізована з Notion KB
+    restart: unless-stopped
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.42.3   # закріплено; оновлювати свідомо
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=Europe/Kyiv
+      - TZ=Europe/Kyiv
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      # n8n отримує сирий текст Slack ДО redaction → не зберігати дані виконань (golden rule 6)
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=none
+      - EXECUTIONS_DATA_SAVE_ON_PROGRESS=false
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
+      # KB-sync воркфлоу читає токен з env ($env.KB_SYNC_TOKEN). Ціна: будь-хто з правом редагувати
+      # воркфлоу бачить env n8n → тримати тут лише цей токен, без кредів на запис.
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - KB_SYNC_TOKEN=${KB_SYNC_TOKEN:?задай KB_SYNC_TOKEN у .env}
+      - NOTION_KB_DATABASE_ID=${NOTION_KB_DATABASE_ID:-}   # ID бази «IAM KB» (не секрет)
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n:/workflows:ro         # експорти воркфлоу з репо (для import:workflow)
+    depends_on:
+      - triage
+    restart: unless-stopped
+
+volumes:
+  n8n_data:
+  triage_kb:
