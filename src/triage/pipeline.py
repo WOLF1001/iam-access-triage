@@ -74,7 +74,11 @@ def run_one(req_id: int, text: str, *, requester_slack: str | None, thread: str 
             apps = catalog.resolve_apps(red_text)
         missing = detect_missing(sub_text if multi else red_text, has_thread)
         p_app = primary(apps)
-        ctx = readside.build(requester_slack, red_thread, {sub.type}, apps, {s.name for s in full_signals}, p_app)
+        # Read-side checks can only raise the route, so they run on the UNION of the LLM type and the
+        # deterministic rules type: the LLM must not be able to skip e.g. the System Log check by
+        # calling a login problem an access request (#42 with a local model → SECURITY lost).
+        det_type, _ = classify._rules_type(sub_text)
+        ctx = readside.build(requester_slack, red_thread, {sub.type, det_type}, apps, {s.name for s in full_signals}, p_app)
         d = decide(sub, sub_text, red_text, sigs, full_signals, ctx, missing, apps, has_thread)
         decisions.append(d)
 

@@ -139,3 +139,12 @@ def test_llm_cannot_pick_which_of_two_apps_is_auto(llm):
     llm(SubRequest(summary=text, type="access_request", app_mentions=["vpn", "tableau"], confidence=0.99))
     r = run_text(text, mode="llm", requester="U01")
     assert not any(d.action == "add_birthright_group" and d.action_done for d in r.decisions)
+
+
+def test_llm_type_cannot_skip_read_side_security_check(llm):
+    """#42 with a local model: the LLM called a login problem an access request, so the System Log check
+    (which finds Tor logins + lockouts) did not run and SECURITY became HUMAN. Read-side triggers now use
+    the union of the LLM type and the deterministic rules type."""
+    llm(SubRequest(summary=REQ[42], type="access_request", confidence=0.9))
+    r = run_text(REQ[42], req_id=42, mode="llm", requester="U09")
+    assert r.overall_route == "SECURITY_ESCALATION"
