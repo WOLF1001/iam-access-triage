@@ -7,7 +7,23 @@ false negative = небезпечна авто-дія (дорого).
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
+
+# Латиниця, що візуально = кирилиці. Замінюємо ЛИШЕ в словах зі змішаними абетками
+# («aдмінку» з латинською a), щоб не ламати чисто латинські назви (tableau, admin).
+_CONFUSABLE = str.maketrans({"a": "а", "c": "с", "e": "е", "i": "і", "o": "о", "p": "р", "x": "х", "y": "у", "k": "к"})
+_CYR = re.compile(r"[\u0400-\u04ff]")
+_LAT = re.compile(r"[a-z]")
+_WORD = re.compile(r"\w+")
+
+
+def normalize(text: str) -> str:
+    """NFKC + без невидимих символів (Cf: zero-width, bidi) + latin→cyrillic у змішаних словах + lower."""
+    t = unicodedata.normalize("NFKC", text)
+    t = "".join(ch for ch in t if unicodedata.category(ch) != "Cf").lower()
+    return _WORD.sub(lambda m: m.group(0).translate(_CONFUSABLE)
+                     if _CYR.search(m.group(0)) and _LAT.search(m.group(0)) else m.group(0), t)
 
 TEXT_DETECTORS: dict[str, list[str]] = {
     "secret_compromise": [r"злит", r"скомпрометов", r"leak", r"витік", r"витекл"],
@@ -55,7 +71,7 @@ class Signal:
 
 
 def detect_text_signals(text: str) -> list[Signal]:
-    low = text.lower()
+    low = normalize(text)
     found: list[Signal] = []
     for name, pats in TEXT_DETECTORS.items():
         for p in pats:
@@ -67,7 +83,7 @@ def detect_text_signals(text: str) -> list[Signal]:
 
 
 def detect_missing(text: str, has_thread: bool) -> list[str]:
-    low = text.lower()
+    low = normalize(text)
     missing = []
     for label, pats in MISSING_DETECTORS.items():
         if any(re.search(p, low) for p in pats):

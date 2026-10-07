@@ -142,6 +142,9 @@ hard_rules:
   - signal: low_confidence
     min_route: HUMAN_REVIEW
     reason: "Класифікатор не впевнений (confidence < поріг) → fail-closed."
+  - signal: llm_ungrounded
+    min_route: null          # не піднімає сам: незаземлене просто відкидається, сигнали рахуються по всьому тексту
+    reason: "LLM повернула summary/згадку системи, якої немає в тексті звернення. Відкинуто; рішення — лише по тексту."
   - signal: multi_intent
     min_route: null          # не піднімає сам по собі; кожен sub-request маршрутизується окремо
     reason: "Кілька запитів в одному. Розбито на sub-requests; загальний маршрут = найсуворіший."
@@ -183,5 +186,6 @@ auto_allowlist:
 thresholds:
   llm_min_confidence: 0.7        # нижче → low_confidence → HUMAN_REVIEW
   max_subjects_auto: 1           # більше 1 суб'єкта → не авто
-  approval_ttl_hours: 72         # апрув протухає
+  approval_ttl_hours: 72         # апрув на ще НЕ виконану дію протухає (act-side апрувів — поза прототипом)
+  resend_max_age_days: 30        # повторний інвайт авто лише якщо апрув свіжіший; інакше — новий апрув
   temp_access_default_days: 30   # дефолтний строк для неперманентних доступів

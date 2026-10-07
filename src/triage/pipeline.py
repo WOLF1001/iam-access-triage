@@ -4,9 +4,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from . import act, catalog, classify, readside, respond
-from .policy import Decision, decide
+from .policy import GLOBAL_SIGNALS, Decision, decide, primary
 from .redact import redact
-from .signals import Signal, detect_missing, detect_text_signals
+from .signals import Signal, detect_missing, detect_text_signals, normalize
 
 
 @dataclass
@@ -40,20 +40,42 @@ def run_one(req_id: int, text: str, *, requester_slack: str | None, thread: str 
         full_signals.append(Signal("secret_in_message", "text", f"secret scanner: {findings}"))
     has_thread = bool(thread)
 
+    # 3. Заземлення виходу LLM на текст звернення (ADR-010, GAP-1/GAP-2).
+    #    summary і app_mentions пише LLM → довіряємо їм лише якщо вони дослівно є у зверненні.
+    source = normalize(red_text + " " + (red_thread or ""))
+    subs = cls.sub_requests
+    multi = len(subs) > 1
+    sub_texts, sub_signals, sub_mentions = [], [], []
+    for sub in subs:
+        grounded = bool(sub.summary.strip()) and normalize(sub.summary) in source
+        st = sub.summary if (multi or mode == "rules") and grounded else red_text
+        sigs = detect_text_signals(st)
+        mentions = [m for m in sub.app_mentions if m.strip() and normalize(m) in source]
+        dropped = [m for m in sub.app_mentions if m not in mentions]
+        if dropped:
+            sigs.append(Signal("llm_ungrounded", "llm", f"згадки систем, яких немає в тексті, відкинуто: {dropped}"))
+        if multi and not grounded:
+            sigs.append(Signal("llm_ungrounded", "llm", "summary підзапиту не з тексту → сигнали рахуються по всьому зверненню"))
+        sub_texts.append(st)
+        sub_signals.append(sigs)
+        sub_mentions.append(mentions)
+    # Підлога: кожен regex-сигнал повного тексту має потрапити хоча б в один підзапит.
+    # Якщо поділ на підзапити його «загубив» — він додається до всіх (консервативно).
+    covered = {x.name for sigs in sub_signals for x in sigs}
+    uncovered = [x for x in full_signals if x.name not in covered and x.name not in GLOBAL_SIGNALS]
+    for sigs in sub_signals:
+        sigs += [Signal(x.name, x.origin, f"{x.evidence} (з повного тексту; не атрибутовано підзапиту)") for x in uncovered]
+
     decisions: list[Decision] = []
-    for sub in cls.sub_requests:
-        sub_text = sub.summary if mode == "rules" else red_text
-        if len(cls.sub_requests) > 1:
-            sub_text = sub.summary
-        apps = catalog.resolve_apps(" ".join(sub.app_mentions + [sub_text]))
-        if not apps and len(cls.sub_requests) > 1:   # "+ інструкція як підключитись" → контекст із сусіднього підзапиту
+    for sub, sub_text, sigs, mentions in zip(subs, sub_texts, sub_signals, sub_mentions):
+        # порядок app — за текстом звернення, а не за порядком, який обрала LLM
+        apps = catalog.resolve_apps(sub_text + " " + " ".join(mentions))
+        if not apps and multi:   # "+ інструкція як підключитись" → контекст із сусіднього підзапиту
             apps = catalog.resolve_apps(red_text)
-        sub_signals = detect_text_signals(sub_text)
-        missing = detect_missing(sub_text if len(cls.sub_requests) > 1 else red_text, has_thread)
-        from .policy import primary
+        missing = detect_missing(sub_text if multi else red_text, has_thread)
         p_app = primary(apps)
         ctx = readside.build(requester_slack, red_thread, {sub.type}, apps, {s.name for s in full_signals}, p_app)
-        d = decide(sub, sub_text, red_text, sub_signals, full_signals, ctx, missing, apps, has_thread)
+        d = decide(sub, sub_text, red_text, sigs, full_signals, ctx, missing, apps, has_thread)
         decisions.append(d)
 
     if len(decisions) > 1:

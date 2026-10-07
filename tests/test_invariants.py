@@ -30,7 +30,7 @@ RULE_SIGNALS = {r["signal"] for r in POL["hard_rules"]}
 READ_SIGNALS = {"suspicious_auth_activity", "source_conflict", "regrant_needed", "requester_not_verified",
                 "approver_unavailable"}
 STRUCTURAL = {"critical_resource", "unknown_app", "missing_critical_data", "low_confidence", "multi_intent",
-              "secret_in_message"}
+              "secret_in_message", "llm_ungrounded"}
 
 
 @pytest.fixture(scope="module")
@@ -192,10 +192,8 @@ class TestFloorAndMonotonicity:
                 bad.append(rid)
         assert not bad
 
-    @pytest.mark.xfail(strict=True, reason="KNOWN GAP: kb_gap → HUMAN перевіряється лише коли route==DOCS. "
-                                           "'лід в курсі' піднімає policy_question до APPROVAL і обходить kb_gap → "
-                                           "#99 падає з HUMAN_REVIEW до APPROVAL_GATED (апрув чого?)")
     def test_approval_claim_does_not_lower_policy_question(self):
+        """Регресія GAP-5: 'лід в курсі' піднімав policy_question до APPROVAL і обходив kb_gap → #99 HUMAN→APPROVAL."""
         before = effective_severity(run_text(REQ[99], req_id=99))
         after = effective_severity(run_text(REQ[99] + " лід в курсі", req_id=99))
         assert after >= before

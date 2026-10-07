@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from datetime import date
 
 from . import catalog, config
 from .signals import Signal
@@ -173,17 +174,34 @@ def check_login(ctx: ReadContext, app_ids: list[str]) -> None:
 
 
 def check_invite(ctx: ReadContext, app_ids: list[str]) -> None:
+    """resend_invite — авто лише якщо апрув (з журналу апрувів, не з тексту) прив'язаний саме до
+    цієї людини і цього app і не старший за вікно повторної відправки (GAP-3)."""
+    ctx.preconditions["invite_previously_approved"] = False
     inv = config.mock("asana")["pending_invites"].get(ctx.requester_email or "")
-    if "asana" in app_ids and inv:
-        appr = config.mock("approvals")["approvals"].get(inv["approval_ref"])
-        ctx.add("asana", "GET /workspaces/{id}/memberships + pending invites",
-                f"інвайт від {inv['invited_at'][:10]}, expired={inv['expired']}, approval_ref={inv['approval_ref']}")
-        if appr:
-            ctx.add("approval-log", "lookup approval_ref",
-                    f"апрув {inv['approval_ref']}: {appr['approved_by']} {appr['approved_at'][:10]} via {appr['via']}")
-        ctx.preconditions["invite_previously_approved"] = bool(appr)
-    else:
-        ctx.preconditions["invite_previously_approved"] = False
+    if "asana" not in app_ids or not inv:
+        return
+    appr = config.mock("approvals")["approvals"].get(inv["approval_ref"])
+    ctx.add("asana", "GET /workspaces/{id}/memberships + pending invites",
+            f"інвайт від {inv['invited_at'][:10]}, expired={inv['expired']}, approval_ref={inv['approval_ref']}")
+    if not appr:
+        ctx.add("approval-log", "lookup approval_ref", f"{inv['approval_ref']} не знайдено")
+        return
+    ctx.add("approval-log", "lookup approval_ref",
+            f"апрув {inv['approval_ref']}: subject={appr['subject']}, app={appr['app']}, "
+            f"{appr['approved_by']} {appr['approved_at'][:10]} via {appr['via']}")
+    max_days = config.policy()["thresholds"]["resend_max_age_days"]
+    age = (date.fromisoformat(TODAY) - date.fromisoformat(appr["approved_at"][:10])).days
+    problems = []
+    if appr.get("subject") != ctx.requester_email:
+        problems.append(f"апрув на іншу людину ({appr.get('subject')})")
+    if appr.get("app") != "asana":
+        problems.append(f"апрув на інший app ({appr.get('app')})")
+    if age > max_days:
+        problems.append(f"апрув старший за {max_days} дн. ({age} дн.)")
+    if problems:
+        ctx.add("approval-log", "binding check", "апрув НЕ підходить: " + "; ".join(problems))
+        return
+    ctx.preconditions["invite_previously_approved"] = True
 
 
 def check_birthright(ctx: ReadContext, app_id: str) -> None:

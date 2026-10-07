@@ -206,9 +206,11 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
     if d.route == "AUTO_RESOLVE":
         pre = dict(ctx.preconditions)
         pre["requester_is_subject"] = sub.subject == "self" and "on_behalf" not in names
+        # одна entitlement на підзапит: інакше «яку саме видати автоматично» вирішував би порядок згадок
+        pre["single_entitlement"] = len([a for a in apps if a not in CONTEXT_ONLY_APPS]) <= 1
         if sub.type == "invite_resend":
             d.action = "resend_invite"
-            need = ["requester_is_subject", "requester_active_hris", "invite_previously_approved"]
+            need = ["requester_is_subject", "requester_active_hris", "invite_previously_approved", "single_entitlement"]
         elif sub.type == "login_diagnostic":
             d.action = "readonly_diagnostic"
             need = ["requester_is_subject"]
@@ -216,7 +218,7 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
                 pre["read_side_coverage"] = False
                 need.append("read_side_coverage")
         elif d.action == "add_birthright_group":
-            need = ["requester_is_subject", "requester_active_hris", "app_birthright"]
+            need = ["requester_is_subject", "requester_active_hris", "app_birthright", "single_entitlement"]
         else:
             need = ["__not_in_allowlist__"]
         failed = [n for n in need if not pre.get(n)]
@@ -261,8 +263,10 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
 
     # --- 7. DOCS лише якщо стаття реально існує в KB; інакше — KB-gap → людина
     d.kb_articles = match_kb(sub_text, p_app, sub.type)
-    if d.route == "DOCS_REDIRECT" and not d.kb_articles:
-        d.route = "HUMAN_REVIEW"
+    # GAP-5: перевіряємо від базового маршруту типу, а не від поточного — інакше сигнал, що підняв
+    # маршрут вище DOCS (напр. «лід в курсі»), «обходив» kb_gap і маршрут ставав м'якшим.
+    if not d.kb_articles and (d.route == "DOCS_REDIRECT" or pol["type_base_route"][sub.type] == "DOCS_REDIRECT"):
+        d.route = config.max_route(d.route, "HUMAN_REVIEW")
         d.reasons.append({"signal": "kb_gap", "origin": "kb", "evidence": "немає статті в KB",
                           "min_route": "HUMAN_REVIEW", "reason": "Бот не генерує інструкції 'з голови': відповідає людина, стаття → в backlog KB"})
 

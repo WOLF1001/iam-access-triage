@@ -93,7 +93,8 @@ TYPE_RULES: list[tuple[str, list[str]]] = [
 
 
 def _rules_type(text: str) -> tuple[str, float]:
-    low = text.lower()
+    from .signals import normalize
+    low = normalize(text)
     for t, pats in TYPE_RULES:
         if any(re.search(p, low) for p in pats):
             return t, 0.8

@@ -5,8 +5,8 @@
 Policy engine має тримати межі незалежно від цього.
 
 Property-based (hypothesis) — генеруємо довільні класифікації для реальних звернень.
-Тести з xfail(strict=True) — ЗНАЙДЕНІ ДІРИ: вони документують поточну поведінку
-і впадуть (XPASS → FAIL), щойно діру закриють, — тоді прибрати маркер.
+Тести GAP-1..4 — регресії для дір, знайдених цими ж тестами (спершу були xfail(strict=True),
+закриті за ADR-010 — див. git log і ai-artifacts/ai-mistakes.md).
 """
 from __future__ import annotations
 
@@ -83,15 +83,14 @@ def test_llm_saying_not_iam_cannot_hide_security(llm):
 
 
 # ============================================================================
-# ЗНАЙДЕНІ ДІРИ (xfail strict). Кожна — з конкретним сценарієм атаки.
+# Регресії знайдених дір (GAP-1..4). Кожна — з конкретним сценарієм атаки.
 # ============================================================================
 PRIVILEGED = "дайте мені адмінку в 1password, всі vault-и"
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "GAP-1 (critical): multi-sub laundering. При >1 підзапитів pipeline рахує regex-сигнали по sub.summary, "
-    "який пише LLM, а з повного тексту переносить лише GLOBAL_SIGNALS. LLM розбиває запит на "
-    "'доступ до vpn' + 'дякую' → privileged_access/broad_scope/critical_resource зникають → AUTO_RESOLVE."))
+# GAP-1 (critical): multi-sub laundering. При >1 підзапитів pipeline рахує regex-сигнали по sub.summary, який
+#   пише LLM, а з повного тексту переносить лише GLOBAL_SIGNALS. LLM розбиває запит на 'доступ до vpn' +
+#   'дякую' → privileged_access/broad_scope/critical_resource зникають → AUTO_RESOLVE.
 def test_gap1_multi_sub_cannot_launder_signals(llm):
     llm(SubRequest(summary="доступ до vpn", type="access_request", app_mentions=["vpn"], confidence=0.99),
         SubRequest(summary="дякую", type="how_to", confidence=0.99))
@@ -100,10 +99,9 @@ def test_gap1_multi_sub_cannot_launder_signals(llm):
     assert not any(d.action_done and d.action != "readonly_diagnostic" for d in r.decisions)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "GAP-2 (high): app_mentions не заземлені на текст. Схема каже 'дослівно з тексту', але код цього не "
-    "перевіряє: LLM повертає ['vpn'] для запиту про tableau → primary_app=vpn → AUTO add_birthright_group "
-    "не на ту entitlement. Фікс: відкидати згадки, яких немає в red_text (substring після нормалізації)."))
+# GAP-2 (high): app_mentions не заземлені на текст. Схема каже 'дослівно з тексту', але код цього не
+#   перевіряє: LLM повертає ['vpn'] для запиту про tableau → primary_app=vpn → AUTO add_birthright_group не на
+#   ту entitlement. Фікс: відкидати згадки, яких немає в red_text (substring після нормалізації).
 def test_gap2_ungrounded_app_mention_ignored(llm):
     llm(SubRequest(summary="дайте доступ до tableau", type="access_request", app_mentions=["vpn"], confidence=0.99))
     r = run_text("дайте доступ до tableau", mode="llm", requester="U01")
@@ -111,10 +109,9 @@ def test_gap2_ungrounded_app_mention_ignored(llm):
     assert r.overall_route != "AUTO_RESOLVE"
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "GAP-3 (high): approval не прив'язаний до subject/app/TTL. check_invite перевіряє лише, що approval_ref "
-    "існує. Апрув на іншу людину/інший app або старший за approval_ttl_hours=72 все одно дає AUTO resend_invite. "
-    "До того ж approval_ttl_hours оголошений у policy.yaml, але ніде не застосовується."))
+# GAP-3 (high): approval не прив'язаний до subject/app/TTL. check_invite перевіряє лише, що approval_ref
+#   існує. Апрув на іншу людину/інший app або старший за approval_ttl_hours=72 все одно дає AUTO
+#   resend_invite. До того ж approval_ttl_hours оголошений у policy.yaml, але ніде не застосовується.
 def test_gap3_approval_must_match_subject_and_app(mocks):
     appr = mocks("approvals")["approvals"]["APR-2026-0912"]
     appr["subject"], appr["app"] = "someone.else@corp.example", "onepassword"
@@ -122,10 +119,23 @@ def test_gap3_approval_must_match_subject_and_app(mocks):
     assert r.overall_route != "AUTO_RESOLVE"
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "GAP-4 (medium): обхід regex через homoglyph/zero-width. Латинська 'a' в 'aдмінку' або U+200B "
-    "всередині слова — privileged_access не спрацьовує, маршрут APPROVAL замість HUMAN. "
-    "Фікс: NFKC + strip Cf-символів + мапа confusables (latin→cyrillic) перед детекторами."))
+# GAP-4 (medium): обхід regex через homoglyph/zero-width. Латинська 'a' в 'aдмінку' або U+200B всередині слова
+#   — privileged_access не спрацьовує, маршрут APPROVAL замість HUMAN. Фікс: NFKC + strip Cf-символів + мапа
+#   confusables (latin→cyrillic) перед детекторами.
 @pytest.mark.parametrize("text", ["дайте aдмінку в tableau", "дайте ад​мінку в tableau"])
 def test_gap4_unicode_evasion(text):
     assert SEV[run_text(text, requester="U01").overall_route] >= SEV["HUMAN_REVIEW"]
+
+
+def test_gap3_stale_approval_is_not_reused(mocks):
+    """Апрув старший за resend_max_age_days → новий апрув, а не авто-повтор."""
+    mocks("approvals")["approvals"]["APR-2026-0912"]["approved_at"] = "2026-07-01T08:00:00Z"
+    assert run_text(REQ[104], req_id=104, requester="U02").overall_route != "AUTO_RESOLVE"
+
+
+def test_llm_cannot_pick_which_of_two_apps_is_auto(llm):
+    """Один підзапит з двома системами (vpn + tableau): LLM не обирає, яку видати авто."""
+    text = "дайте доступ до vpn і tableau"
+    llm(SubRequest(summary=text, type="access_request", app_mentions=["vpn", "tableau"], confidence=0.99))
+    r = run_text(text, mode="llm", requester="U01")
+    assert not any(d.action == "add_birthright_group" and d.action_done for d in r.decisions)

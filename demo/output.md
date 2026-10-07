@@ -82,7 +82,7 @@ _Чому в вибірці: AUTO: birthright-група (VPN) + інструк�
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 91, "sub": 0, "route": "AUTO_RESOLVE", "requester": "olena.marchenko@corp.example", "kind": "action", "action": "add_birthright_group", "params": {"group": "vpn-users", "user": "olena.marchenko@corp.example"}, "would_call": "Okta: PUT /api/v1/groups/{groupId}/users/{userId}  (OAuth scope okta.groups.manage, resource set = allowlisted groups)", "preconditions": {"requester_active_hris": true, "app_birthright": true, "already_has_access": false, "group_allowlisted_for_bot": true}, "idempotency_key": "eafca3198c87d66f"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 91, "sub": 0, "route": "AUTO_RESOLVE", "requester": "olena.marchenko@corp.example", "kind": "action", "action": "add_birthright_group", "params": {"group": "vpn-users", "user": "olena.marchenko@corp.example"}, "would_call": "Okta: PUT /api/v1/groups/{groupId}/users/{userId}  (OAuth scope okta.groups.manage, resource set = allowlisted groups)", "preconditions": {"requester_active_hris": true, "app_birthright": true, "already_has_access": false, "group_allowlisted_for_bot": true}, "idempotency_key": "eafca3198c87d66f"}
 ```
 
 </details>
@@ -108,7 +108,7 @@ _Чому в вибірці: AUTO: повторний інвайт, апрув �
   - `hris` · GET /employees?email= (polling snapshot): requester Софія Лисенко <sofia.lysenko@corp.example>: status=active, dept=Product, manager=vlad.moroz@corp.example
   - `okta` · GET /api/v1/users/{id}, /groups, /appLinks: Okta status=ACTIVE, groups=['everyone', 'dept-product', 'vpn-users'], apps=['slack', 'google_workspace', 'onepassword', 'notion', 'asana']
   - `asana` · GET /workspaces/{id}/memberships + pending invites: інвайт від 2026-09-29, expired=True, approval_ref=APR-2026-0912
-  - `approval-log` · lookup approval_ref: апрув APR-2026-0912: vlad.moroz@corp.example 2026-09-29 via slack_button
+  - `approval-log` · lookup approval_ref: апрув APR-2026-0912: subject=sofia.lysenko@corp.example, app=asana, vlad.moroz@corp.example 2026-09-29 via slack_button
 
 **Чернетка відповіді користувачу**
 
@@ -119,7 +119,7 @@ _Чому в вибірці: AUTO: повторний інвайт, апрув �
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 104, "sub": 0, "route": "AUTO_RESOLVE", "requester": "sofia.lysenko@corp.example", "kind": "action", "action": "resend_invite", "params": {}, "would_call": "Asana: POST /workspaces/{gid}/addUser (повтор для вже погодженого approval_ref)", "preconditions": {"requester_active_hris": true, "invite_previously_approved": true}, "idempotency_key": "b8bbcaba13592367"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 104, "sub": 0, "route": "AUTO_RESOLVE", "requester": "sofia.lysenko@corp.example", "kind": "action", "action": "resend_invite", "params": {}, "would_call": "Asana: POST /workspaces/{gid}/addUser (повтор для вже погодженого approval_ref)", "preconditions": {"requester_active_hris": true, "invite_previously_approved": true}, "idempotency_key": "b8bbcaba13592367"}
 ```
 
 </details>
@@ -179,7 +179,7 @@ _Чому в вибірці: REROUTE: не IAM (техніка)_
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 51, "sub": 0, "route": "REROUTE", "requester": "bohdan.zaitsev@corp.example", "kind": "reroute", "queue": "helpdesk", "would_call": "Slack: chat.postMessage у канал черги з посиланням на тред"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 51, "sub": 0, "route": "REROUTE", "requester": "bohdan.zaitsev@corp.example", "kind": "reroute", "queue": "helpdesk", "would_call": "Slack: chat.postMessage у канал черги з посиланням на тред"}
 ```
 
 </details>
@@ -229,8 +229,8 @@ _Чому в вибірці: Діагностика read-side: доступ зн
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 69, "sub": 0, "route": "APPROVAL_GATED", "requester": "maksym.tkachenko@corp.example", "kind": "action", "action": "readonly_diagnostic", "params": {}, "would_call": "Okta: GET /api/v1/logs (read-only)", "preconditions": {"requester_active_hris": true}, "idempotency_key": "d19fe321b97abf6f"}
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 69, "sub": 0, "route": "APPROVAL_GATED", "requester": "maksym.tkachenko@corp.example", "kind": "approval_request", "status": "pending", "app": "tableau", "approvers": ["resource-owner:data-team-lead", "budget-owner"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 69, "sub": 0, "route": "APPROVAL_GATED", "requester": "maksym.tkachenko@corp.example", "kind": "action", "action": "readonly_diagnostic", "params": {}, "would_call": "Okta: GET /api/v1/logs (read-only)", "preconditions": {"requester_active_hris": true}, "idempotency_key": "d19fe321b97abf6f"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 69, "sub": 0, "route": "APPROVAL_GATED", "requester": "maksym.tkachenko@corp.example", "kind": "approval_request", "status": "pending", "app": "tableau", "approvers": ["resource-owner:data-team-lead", "budget-owner"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
 ```
 
 </details>
@@ -279,8 +279,8 @@ _Чому в вибірці: Діагностика read-side: 'проблеми
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 42, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "roman.hnatiuk@corp.example", "kind": "action", "action": "readonly_diagnostic", "params": {}, "would_call": "Okta: GET /api/v1/logs (read-only)", "preconditions": {"requester_active_hris": true}, "idempotency_key": "677e06c4cd43d1dc"}
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 42, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "roman.hnatiuk@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:login_diagnostic", "suspicious_auth_activity"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 42, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "roman.hnatiuk@corp.example", "kind": "action", "action": "readonly_diagnostic", "params": {}, "would_call": "Okta: GET /api/v1/logs (read-only)", "preconditions": {"requester_active_hris": true}, "idempotency_key": "677e06c4cd43d1dc"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 42, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "roman.hnatiuk@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:login_diagnostic", "suspicious_auth_activity"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
 ```
 
 </details>
@@ -322,8 +322,8 @@ P.S. Погодження в тексті повідомлення не раху
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 5, "sub": 0, "route": "NEED_INFO", "requester": "dmytro.savchuk@corp.example", "kind": "approval_request", "status": "blocked_on_info", "app": null, "approvers": ["manager:oksana.melnyk@corp.example"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 5, "sub": 0, "route": "NEED_INFO", "requester": "dmytro.savchuk@corp.example", "kind": "clarification", "questions": ["Яка саме модель/тула/продукт (точна назва або посилання)?", "Для якої команди і задачі ключ, хто буде його власником, який місячний spend limit поставити?"], "would_call": "Slack: chat.postMessage(thread_ts) — бот чекає відповідь і перезапускає triage"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 5, "sub": 0, "route": "NEED_INFO", "requester": "dmytro.savchuk@corp.example", "kind": "approval_request", "status": "blocked_on_info", "app": null, "approvers": ["manager:oksana.melnyk@corp.example"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 5, "sub": 0, "route": "NEED_INFO", "requester": "dmytro.savchuk@corp.example", "kind": "clarification", "questions": ["Яка саме модель/тула/продукт (точна назва або посилання)?", "Для якої команди і задачі ключ, хто буде його власником, який місячний spend limit поставити?"], "would_call": "Slack: chat.postMessage(thread_ts) — бот чекає відповідь і перезапускає triage"}
 ```
 
 </details>
@@ -402,7 +402,7 @@ _Чому в вибірці: Mirror access 'все що у ліда' + апру�
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 46, "sub": 0, "route": "HUMAN_REVIEW", "requester": "taras.bondar@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P2", "reasons": ["type:access_request", "mirror_access", "broad_scope", "approver_unavailable"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 46, "sub": 0, "route": "HUMAN_REVIEW", "requester": "taras.bondar@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P2", "reasons": ["type:access_request", "mirror_access", "broad_scope", "approver_unavailable"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
 ```
 
 </details>
@@ -455,7 +455,7 @@ _Чому в вибірці: Обхід HRIS: 'у HRM ще не внесли' + 
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 75, "sub": 0, "route": "HUMAN_REVIEW", "requester": "vlad.moroz@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P2", "reasons": ["type:onboarding", "hris_bypass", "broad_scope", "on_behalf", "missing_critical_data"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 75, "sub": 0, "route": "HUMAN_REVIEW", "requester": "vlad.moroz@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P2", "reasons": ["type:onboarding", "hris_bypass", "broad_scope", "on_behalf", "missing_critical_data"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
 ```
 
 </details>
@@ -515,7 +515,7 @@ _Чому в вибірці: Offboarding: HRIS не підтверджує зв�
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 92, "sub": 0, "route": "HUMAN_REVIEW", "requester": "kateryna.shevchenko@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P1", "reasons": ["type:offboarding", "offboarding", "on_behalf", "source_conflict"], "dry_run_plan_for_human": [{"system": "okta", "would_call": "POST /api/v1/users/{id}/lifecycle/suspend", "effect": "припинить SSO-доступ до 6 apps; сесії — DELETE /users/{id}/sessions"}, {"system": "1password", "would_call": "SCIM: deactivate user", "effect": "доступ до vaults ['Marketing-Shared', 'Market-Intel-Tools', 'Meta-Ads-Billing'] закриється; АЛЕ секрети в shared vaults, які людина бачила, треба ротувати (рішення власників)"}, {"system": "google_workspace", "would_call": "users.update(suspended=true) + Data Transfer API", "effect": "передати 412 файлів менеджеру; відкликати OAuth-токени ['Make', 'Unknown Chrome extension (drive.readonly)']"}, {"system": "non-SSO SaaS (manual)", "would_call": "—", "effect": "за назвами vaults ['Market-Intel-Tools', 'Meta-Ads-Billing'] людина ймовірно має локальні акаунти/спільні креди поза Okta — список неповний, перевірка вручну"}], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 92, "sub": 0, "route": "HUMAN_REVIEW", "requester": "kateryna.shevchenko@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P1", "reasons": ["type:offboarding", "offboarding", "on_behalf", "source_conflict"], "dry_run_plan_for_human": [{"system": "okta", "would_call": "POST /api/v1/users/{id}/lifecycle/suspend", "effect": "припинить SSO-доступ до 6 apps; сесії — DELETE /users/{id}/sessions"}, {"system": "1password", "would_call": "SCIM: deactivate user", "effect": "доступ до vaults ['Marketing-Shared', 'Market-Intel-Tools', 'Meta-Ads-Billing'] закриється; АЛЕ секрети в shared vaults, які людина бачила, треба ротувати (рішення власників)"}, {"system": "google_workspace", "would_call": "users.update(suspended=true) + Data Transfer API", "effect": "передати 412 файлів менеджеру; відкликати OAuth-токени ['Make', 'Unknown Chrome extension (drive.readonly)']"}, {"system": "non-SSO SaaS (manual)", "would_call": "—", "effect": "за назвами vaults ['Market-Intel-Tools', 'Meta-Ads-Billing'] людина ймовірно має локальні акаунти/спільні креди поза Okta — список неповний, перевірка вручну"}], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
 ```
 
 </details>
@@ -566,7 +566,7 @@ _Чому в вибірці: Секрет у треді → редакція д�
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 32, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "nadia.romanenko@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:secret_incident", "secret_compromise", "secret_in_message"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 32, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "nadia.romanenko@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:secret_incident", "secret_compromise", "secret_in_message"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
 ```
 
 </details>
@@ -611,7 +611,7 @@ _Чому в вибірці: Не IAM, але High-знахідка → SECURITY
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 85, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "ihor.kostenko@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:not_iam", "security_finding"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 85, "sub": 0, "route": "SECURITY_ESCALATION", "requester": "ihor.kostenko@corp.example", "kind": "escalation", "queue": "security", "priority": "P1", "reasons": ["type:not_iam", "security_finding"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call + PagerDuty"}
 ```
 
 </details>
@@ -655,7 +655,7 @@ _Чому в вибірці: Експорт PII (телефони) з Business M
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 26, "sub": 0, "route": "HUMAN_REVIEW", "requester": "serhii.lytvyn@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:data_export", "pii_request"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 26, "sub": 0, "route": "HUMAN_REVIEW", "requester": "serhii.lytvyn@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:data_export", "pii_request"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
 ```
 
 </details>
@@ -701,7 +701,7 @@ _Чому в вибірці: Зміна org-wide політики безпеки
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 12, "sub": 0, "route": "HUMAN_REVIEW", "requester": "pavlo.danylenko@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:security_policy_change", "security_policy_change", "third_party_connector"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 12, "sub": 0, "route": "HUMAN_REVIEW", "requester": "pavlo.danylenko@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:security_policy_change", "security_policy_change", "third_party_connector"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
 ```
 
 </details>
@@ -766,9 +766,9 @@ _Чому в вибірці: Multi-intent: проблема з ліцензіє�
 <details><summary>Записи act-side (mock)</summary>
 
 ```json
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 0, "route": "HUMAN_REVIEW", "requester": "marta.oliinyk@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:license_issue", "multi_intent"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 1, "route": "NEED_INFO", "requester": "marta.oliinyk@corp.example", "kind": "approval_request", "status": "blocked_on_info", "app": "adobe_cc", "approvers": ["manager:creative-lead@corp.example", "budget-owner"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
-{"ts": "2026-10-06T19:36:12+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 1, "route": "NEED_INFO", "requester": "marta.oliinyk@corp.example", "kind": "clarification", "questions": ["Для кого запит (ім'я та корпоративний email)?", "Для якої задачі потрібен доступ і на який строк?"], "would_call": "Slack: chat.postMessage(thread_ts) — бот чекає відповідь і перезапускає triage"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 0, "route": "HUMAN_REVIEW", "requester": "marta.oliinyk@corp.example", "kind": "escalation", "queue": "iam-review", "priority": "P3", "reasons": ["type:license_issue", "multi_intent"], "dry_run_plan_for_human": [], "would_call": "JSM: POST /rest/servicedeskapi/request + Slack DM on-call"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 1, "route": "NEED_INFO", "requester": "marta.oliinyk@corp.example", "kind": "approval_request", "status": "blocked_on_info", "app": "adobe_cc", "approvers": ["manager:creative-lead@corp.example", "budget-owner"], "would_call": "Slack: chat.postMessage (Block Kit: Approve/Deny, TTL 72h) → approver DM", "on_approve": "виконати dry-run план → підтвердити read-side, що зміна застосована"}
+{"ts": "2026-10-07T08:22:23+00:00", "dry_run": true, "mode": "SIMULATED", "request_id": 29, "sub": 1, "route": "NEED_INFO", "requester": "marta.oliinyk@corp.example", "kind": "clarification", "questions": ["Для кого запит (ім'я та корпоративний email)?", "Для якої задачі потрібен доступ і на який строк?"], "would_call": "Slack: chat.postMessage(thread_ts) — бот чекає відповідь і перезапускає triage"}
 ```
 
 </details>
