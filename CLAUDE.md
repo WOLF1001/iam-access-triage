@@ -19,7 +19,7 @@
 5. **Fail-closed:** невалідний вихід LLM, низька впевненість, недоступність API → вгору по спектру.
 6. **Секрети редагуються до LLM і до логів** (`src/triage/redact.py`). Ніколи не логувати сирий текст до редакції.
 7. **Act-side — тільки mock.** Жодних реальних кредів, токенів, викликів до живих систем. Усі дії → `demo/actions*.log` з `dry_run: true`.
-8. **DOCS лише якщо стаття існує в `config/kb.yaml`.** Бот не генерує інструкцій «з голови»; немає статті → `kb_gap` → людина.
+8. **DOCS лише якщо стаття існує в KB** (`config/kb.yaml` або синхронізована з Notion, `Status=Published`). Бот не генерує інструкцій «з голови»; немає статті → `kb_gap` → людина.
 9. **Мапінг на app — детермінований** (`src/triage/catalog.py`, алиаси з `config/app_catalog.yaml`). Невідома система → `unknown_app` → NEED_INFO. Не вгадувати.
 
 ## Команди
@@ -33,6 +33,11 @@ python run_demo.py --classifier replay  # тільки з кешу, офлайн
 python run_demo.py --ids 32 46          # окремі звернення
 python tools/compare_naive.py           # наївна LLM vs policy → ai-artifacts/naive_vs_policy.md
 pytest -q                               # інваріанти безпеки — мають бути зелені ЗАВЖДИ
+python tools/stand.py                   # веб-стенд localhost:8765 (+ LLM-override для атак GAP-1/2)
+colima start && docker compose up -d --build   # n8n :5678 + triage-сервіс :8765 (n8n кличе http://triage:8765)
+python tools/build_n8n_workflow.py      # → n8n/iam-triage.workflow.json; імпорт/публікація — див. docstring
+python tools/build_n8n_kb_sync.py       # → n8n/kb-sync.workflow.json (Notion ⇄ triage); підключення — notion/README.md
+python tools/export_kb_csv.py           # config/kb.yaml → notion/iam_kb.csv для імпорту в Notion
 ```
 
 Модель за замовчуванням: `ANTHROPIC_MODEL=claude-haiku-4-5` (перевизначається env).

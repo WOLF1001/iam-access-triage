@@ -17,7 +17,9 @@ pip install -r requirements.txt
 
 python run_demo.py                          # вибірка 16 кейсів, rules-класифікатор, БЕЗ ключа
 python run_demo.py --all                    # + розподіл маршрутів по всіх 108 зверненнях
-pytest -q                                   # інваріанти безпеки (132 тести)
+pytest -q                                   # інваріанти, adversarial LLM, golden snapshot (321 + 6 xfail)
+python tools/stand.py                       # веб-стенд http://localhost:8765 — вхід → маршрут → журнал дій
+docker compose up -d --build                # n8n http://localhost:5678 + triage-сервіс (їхній стек: n8n → HTTP → Python)
 
 export ANTHROPIC_API_KEY=sk-ant-...
 python run_demo.py --classifier llm         # Claude; відповіді кешуються в cache/llm_cache.json
