@@ -2,6 +2,8 @@
 
 Прототип для тестового завдання HOLYWATER TECH · IAM Engineer.
 
+▶ **[Відео-демо, ~5 хв (Loom)](https://www.loom.com/share/cfb348fb22274819bd3d784150aa308c)**: зони, три звернення наживо в n8n, перевірка помилок ШІ, обмеження.
+
 ## Проблема
 
 Увесь потік звернень про доступи, ліцензії, ключі, ліміти й діагностику входу тримає **одна людина**. Аналіз 108 реальних (знеособлених) звернень ([`docs/process/current-state.md`](docs/process/current-state.md)) показує, куди йде її час:
@@ -109,7 +111,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 |---|---|
 | a. Архітектура, стек, read-side / act-side | [`docs/architecture.md`](docs/architecture.md) · [`docs/adr/`](docs/adr/) (LLM-парсер, fail-closed, межі зон) · [`docs/DECISIONS.md`](docs/DECISIONS.md) |
 | Прототип | `src/triage/` · `config/` (policy, каталог 37 застосунків) · `n8n/` · `docker-compose.yml` · `tools/stand.py` |
-| b. Демо на вибірці | [`demo/output.md`](demo/output.md) · [`demo/actions.log`](demo/actions.log) · [`demo/full_run.md`](demo/full_run.md) · запис — TODO(Loom) |
+| b. Демо на вибірці | [`demo/output.md`](demo/output.md) · [`demo/actions.log`](demo/actions.log) · [`demo/full_run.md`](demo/full_run.md) · **[відео-демо (Loom, ~5 хв)](https://www.loom.com/share/cfb348fb22274819bd3d784150aa308c)** |
 | c. Критика й обмеження | [`docs/critique.md`](docs/critique.md) |
 | d. Робота з AI | [`ai-artifacts/AI_USAGE.md`](ai-artifacts/AI_USAGE.md) (де допомагав, де свідомо не пускав, де помилявся) · [`ai-artifacts/`](ai-artifacts/) |
 | e. Досвід реальних інтеграцій | [`docs/real-integrations.md`](docs/real-integrations.md) |

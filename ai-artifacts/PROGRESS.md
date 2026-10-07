@@ -39,13 +39,14 @@
 
 - [x] Прогін з реальною LLM: локальна qwen3:14b (Ollama, GPU) — 0 маршрутів нижче rules після фіксу #42; deflection 27 → 3 (`demo/full_run_ollama.md`, `demo/output_ollama.md`); кеш для replay закомічено
 
+- [x] Демо-запис Loom (~5 хв) → посилання в README
+
 ## Далі (за пріоритетом)
 
 | # | Задача | Оцінка | Примітки |
 |---|---|---|---|
 | 1 | Прогін з реальною LLM: `--classifier llm`, закомітити `cache/llm_cache.json`, `demo/output_llm.md` | 20 хв | потрібен `ANTHROPIC_API_KEY` |
 | 2 | `tools/compare_naive.py` → `ai-artifacts/naive_vs_policy.md`; кращі розбіжності — в `ai-mistakes.md` | 20 хв | головний доказ для блоку d |
-| 6 | Демо-запис (Loom 3–5 хв) + лінк у README | 30 хв | |
 | 7 | n8n: воркфлоу апруву (Slack interactivity → перевірка апрувера → act) | 45 хв | основний воркфлоу вже є |
 | 8 | (опц.) «Як колега запускає і розвиває без мене» — розділ у README | 20 хв | частково вже покрито CLAUDE.md |
 
