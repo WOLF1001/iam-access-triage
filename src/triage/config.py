@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -34,7 +35,14 @@ def catalog() -> dict:
 
 @lru_cache
 def kb() -> dict:
-    return _yaml(CONFIG / "kb.yaml")
+    """KB = kb.yaml, або (якщо задано KB_RUNTIME_PATH і файл існує) статті, синхронізовані з Notion.
+    Черги перенаправлення завжди з kb.yaml — це конфіг, а не контент KB."""
+    base = _yaml(CONFIG / "kb.yaml")
+    runtime = os.environ.get("KB_RUNTIME_PATH")
+    if runtime and Path(runtime).exists():
+        synced = json.loads(Path(runtime).read_text(encoding="utf-8"))
+        return {**base, "articles": synced["articles"], "source": synced.get("source", "runtime")}
+    return {**base, "source": "kb.yaml"}
 
 
 @lru_cache
