@@ -1,0 +1,3426 @@
+{
+  "b837d7dcf6dca035af29abd5": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба доступ до корп vpn + інструкція як підключитись\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба доступ до корп vpn + інструкція як підключитись",
+          "type": "access_request",
+          "app_mentions": [
+            "корп vpn"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Який конкретно ресурс у корп vpn потрібен?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1654,
+      "out": 140,
+      "seconds": 3.27
+    }
+  },
+  "1b1e8f7b8a780b0578d98c81": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nінвайт у асану деактивувався поки я дійшла, надішліть ще раз будь ласка\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "інвайт у асану деактивувався поки я дійшла, надішліть ще раз будь ласка",
+          "type": "access_request",
+          "app_mentions": [
+            "асану"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Якщо це інвайт для іншої людини, то хто?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1668,
+      "out": 165,
+      "seconds": 3.04
+    }
+  },
+  "56721e639597aa3a22c79efd": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпитання по лімітах notion api — чи треба нам апати тариф щоб під це вистачило?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "питання по лімітах notion api — чи треба нам апати тариф щоб під це вистачило?",
+          "type": "limits_quota",
+          "app_mentions": [
+            "notion"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які саме ліміти API використовуються?",
+            "Який поточний тариф?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1666,
+      "out": 142,
+      "seconds": 2.66
+    }
+  },
+  "28fd62332eec506b51acb3bd": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nУ мене зламався монітор, його мій кіт завалив, що робити?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "У мене зламався монітор, його мій кіт завалив, що робити?",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Які дії потрібно виконати для вирішення проблеми з монітором?"
+          ],
+          "signals": [],
+          "confidence": 0.1
+        }
+      ]
+    },
+    "usage": {
+      "in": 1663,
+      "out": 135,
+      "seconds": 2.5
+    }
+  },
+  "e957197610f69f566df20f36": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпропав доступ до tableau, через okta не пускає\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "пропав доступ до tableau, через okta не пускає",
+          "type": "access_request",
+          "app_mentions": [
+            "tableau",
+            "okta"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Чи є додаткові деталі про проблему з доступом?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1645,
+      "out": 136,
+      "seconds": 2.53
+    }
+  },
+  "f494b8e786576fb90c279f67": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nвчора ввечері не міг зайти, сьогодні теж дивно. подивіться що з моїм доступом, бо проблеми тільки по вечорах\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "подивіться що з моїм доступом, бо проблеми тільки по вечорах",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка система не працює?",
+            "Які саме проблеми з доступом (наприклад, повідомлення про помилку, відсутність доступу до конкретної функції)?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1681,
+      "out": 165,
+      "seconds": 3.06
+    }
+  },
+  "e60fca397aa88db17f90efd9": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба згенерити новий api-ключ до однієї ai-моделі, це для локалізації, лід в курсі\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "згенерити новий api-ключ до однієї ai-моделі",
+          "type": "secret_incident",
+          "app_mentions": [
+            "ai-модель"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретно ai-модель?",
+            "Який старий ключ потрібно змінити?"
+          ],
+          "signals": [
+            "urgency",
+            "unverified_approval_claim"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1674,
+      "out": 137,
+      "seconds": 2.54
+    }
+  },
+  "60272673e356ee2d82d3835f": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу нас сьогодні лонч і мене вибило, терміново треба скинути пароль!!\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "терміново треба скинути пароль",
+          "type": "credential_reset",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.9
+        }
+      ]
+    },
+    "usage": {
+      "in": 1662,
+      "out": 90,
+      "seconds": 1.68
+    }
+  },
+  "f6f77615283d71c26f361289": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне розумію які доступи мені треба - документи, драйв, api… мій лід у відпустці, а мені треба асап у одну задачу підключитись. можеш все видати, що у ліда було?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "Не розумію які доступи мені треба - документи, драйв, api… мій лід у відпустці, а мені треба асап у одну задачу підключитись. можеш все видати, що у ліда було?",
+          "type": "access_request",
+          "app_mentions": [
+            "документи",
+            "драйв",
+            "api"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретна роль або рівень доступу потрібен?",
+            "Які системи точно потрібні (наприклад, Google Драйв, Microsoft Документи, API конкретної служби)?",
+            "Які обмеження на доступ (наприклад, тільки для читання, редагування, повний доступ)?"
+          ],
+          "signals": [
+            "urgency",
+            "broad_scope",
+            "on_behalf"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1706,
+      "out": 278,
+      "seconds": 5.08
+    }
+  },
+  "c63c9a63a21cb406bbaf6782": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nвиходить нова людина, це неплановий вихід, у HRM ще не внести, налаштуйте асап повний пакет доступів\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "налаштуйте асап повний пакет доступів",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Яка система (або які системи) потребують доступ?",
+            "Яка роль потрібна (адмін, користувач тощо)?"
+          ],
+          "signals": [
+            "urgency",
+            "broad_scope",
+            "hris_bypass",
+            "offboarding"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1677,
+      "out": 158,
+      "seconds": 2.91
+    }
+  },
+  "66935737031570e18a6ae24a": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтерміново заблокуйте всі доступи співробітнику — сьогодні останній день, деталі в тред\n</request>\n<thread>\nАндрій Коваль (andrii.koval@corp.example), сьогодні останній день, заблокуйте все до кінця дня\n</thread>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "терміново заблокуйте всі доступи співробітнику — сьогодні останній день, деталі в тред",
+          "type": "offboarding",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Які конкретно доступи потрібно заблокувати?"
+          ],
+          "signals": [
+            "urgency",
+            "offboarding"
+          ],
+          "confidence": 0.9
+        }
+      ]
+    },
+    "usage": {
+      "in": 1721,
+      "out": 142,
+      "seconds": 2.63
+    }
+  },
+  "3c9c974569e536f4fe45f376": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nасап!! видаліть будь ласка нотатку в 1password зі старим api-ключем рекламної платформи, він скомпрометований\n</request>\n<thread>\nось цей ключ: [REDACTED:anthropic_api_key], валявся в публічному репо\n</thread>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "видаліть нотатку в 1password зі старим api-ключем рекламної платформи",
+          "type": "secret_incident",
+          "app_mentions": [
+            "1password"
+          ],
+          "subject": "unknown",
+          "missing_info": [],
+          "signals": [
+            "secret_compromise",
+            "urgency"
+          ],
+          "confidence": 0.95
+        }
+      ]
+    },
+    "usage": {
+      "in": 1713,
+      "out": 109,
+      "seconds": 2.04
+    }
+  },
+  "565d01b95d8edd7b6f1748b6": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nприйшов звіт від пентестерів, там High-знахідка по одному з продуктів — треба подивитись\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "прийшов звіт від пентестерів, там High-знахідка по одному з продуктів — треба подивитись",
+          "type": "security_policy_change",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Який продукт?",
+            "Яка конкретна High-знахідка?"
+          ],
+          "signals": [
+            "security_finding"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1672,
+      "out": 137,
+      "seconds": 2.55
+    }
+  },
+  "128336d11b8f95eb3ba0fa47": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне знаю, чи це до тебе, але треба вивантажити списки людей з business manager і їх контакти (номера телефонів чи щось таке) для звірки, можеш допомогти\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "звернення про вивантаження списків людей з business manager і їх контакти",
+          "type": "unclear",
+          "app_mentions": [
+            "business manager"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Які саме контакти потрібні (номера телефонів, електронні адреси тощо)?",
+            "Для якої мети потрібні ці дані?",
+            "Хто має доступ до цих даних?"
+          ],
+          "signals": [
+            "pii_request"
+          ],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1690,
+      "out": 177,
+      "seconds": 3.28
+    }
+  },
+  "2f24a9a66af559fe0e2cbf65": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nхочу ввімкнути always-allow для mcp-конекторів у клоді, так зручніше. можеш включити, бо там адміну організації це треба зробити\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "хочу ввімкнути always-allow для mcp-конекторів у клоді, так зручніше. можеш включити, бо там адміну організації це треба зробити",
+          "type": "access_request",
+          "app_mentions": [
+            "кло́д",
+            "mcp-конекторів"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка конкретно функція/роль потрібна для ввімкнення always-allow?"
+          ],
+          "signals": [
+            "on_behalf",
+            "privileged_access"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1690,
+      "out": 188,
+      "seconds": 3.48
+    }
+  },
+  "0fe42b7ab994e6d9fb39c50e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу мене не працює adobe creative cloud, щось з підпискою. і ще треба інвайт закинути моїй колезі новенькій, зробиш?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "у мене не працює adobe creative cloud, щось з підпискою",
+          "type": "access_request",
+          "app_mentions": [
+            "adobe creative cloud"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка проблема з підпискою? (наприклад, відсутність доступу, помилка під час логіну, вичерпання ліцензії)"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        },
+        {
+          "summary": "інвайт закинути моїй колезі новенькій",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Яке застосування/сервіс потрібно активувати?",
+            "Яка роль/рівень доступу потрібна? (наприклад, користувач, адмін)"
+          ],
+          "signals": [
+            "on_behalf"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1684,
+      "out": 283,
+      "seconds": 5.1
+    }
+  },
+  "1e52ec6813289f6235c9cf46": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпривіт! мені скинули лінк на композит, але я досі не можу зайти. можете дати доступ?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "привіт! мені скинули лінк на композит, але я досі не можу зайти. можете дати доступ?",
+          "type": "access_request",
+          "app_mentions": [
+            "композит"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Який обліковий запис використовується?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 153,
+      "seconds": 2.62
+    }
+  },
+  "d10aab4f331ea31971d88740": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу мене вікно віддаленого компа не масштабується нормально, все дрібне. це до вас чи до кого?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "у мене вікно віддаленого компа не масштабується нормально, все дрібне. це до вас чи до кого?",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка система або програма використовується для віддаленого доступу?",
+            "Чи є конкретні помилки або повідомлення про проблему?"
+          ],
+          "signals": [],
+          "confidence": 0.2
+        }
+      ]
+    },
+    "usage": {
+      "in": 1672,
+      "out": 165,
+      "seconds": 2.8
+    }
+  },
+  "e6bcf6cf34fac38c1b081b78": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nв airtable не переносяться таски, думаю це через права. гляньте плз що не так у мене з доступом\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "в airtable не переносяться таски, думаю це через права. гляньте плз що не так у мене з доступом",
+          "type": "access_request",
+          "app_mentions": [
+            "airtable"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Які саме дії не виконуються?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 150,
+      "seconds": 2.56
+    }
+  },
+  "ff45be57b15225ecbc72f635": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nчому в клоді якісь теги/спейси недоступні? мені казали що є обмеження, закинь інфо\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "чому в клоді якісь теги/спейси недоступні? мені казали що є обмеження, закинь інфо",
+          "type": "access_request",
+          "app_mentions": [
+            "клод"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які саме теги/спейси недоступні?",
+            "Яка роль/рівень доступу потрібна?",
+            "Чи є обмеження на рівні організації чи індивідуальні?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1675,
+      "out": 198,
+      "seconds": 3.34
+    }
+  },
+  "90ffe224eb5e53177c57e981": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк отримати менеджерський ключ до стор-консолі одного з продуктів? що для цього треба\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "як отримати менеджерський ключ до стор-консолі одного з продуктів? що для цього треба",
+          "type": "access_request",
+          "app_mentions": [
+            "стор-консоль"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який продукт?",
+            "Яка роль/рівень доступу потрібен (менеджерський ключ)?",
+            "Який термін дії ключа?"
+          ],
+          "signals": [
+            "privileged_access"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1666,
+      "out": 170,
+      "seconds": 2.88
+    }
+  },
+  "2cc4277f5f7637fea6967ba4": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nнам двом треба доступ в один креатив-тул, і ще в однієї колеги акаунт заблокований — розблокуйте плз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "нам двом треба доступ в один креатив-тул",
+          "type": "access_request",
+          "app_mentions": [
+            "один креатив-тул"
+          ],
+          "subject": "multiple",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        },
+        {
+          "summary": "розблокуйте плз",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Яка система?",
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1677,
+      "out": 204,
+      "seconds": 3.46
+    }
+  },
+  "b085ce1404d323d9688868a4": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба інвайт у тестові білди мобільного застосунку (і ios і android)\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба інвайт у тестові білди мобільного застосунку (і ios і android)",
+          "type": "access_request",
+          "app_mentions": [
+            "ios",
+            "android"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (тестувальник, розробник, адмін)?",
+            "Який конкретно тестовий білд?",
+            "На який строк потрібен доступ?"
+          ],
+          "signals": [
+            "prod_access"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1661,
+      "out": 170,
+      "seconds": 2.88
+    }
+  },
+  "7270d90349afaa86ff29fb8e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте будь ласка доступ до тули для транскрибації дзвінків\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте будь ласка доступ до тули для транскрибації дзвінків",
+          "type": "access_request",
+          "app_mentions": [
+            "тули"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "На який строк потрібен доступ?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1657,
+      "out": 140,
+      "seconds": 2.39
+    }
+  },
+  "a6b60690242b94482be71c7d": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nмені прийшов інвайт у meta business, треба підтвердити мою реєстрацію, щоб я бачив репорти\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "Підтвердити реєстрацію в Meta Business для отримання доступу до репортів",
+          "type": "access_request",
+          "app_mentions": [
+            "meta business"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретно роль або рівень доступу потрібен для перегляду репортів?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1673,
+      "out": 134,
+      "seconds": 2.33
+    }
+  },
+  "5e2817e8058f7d48969b511d": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу нас є корпоративна підписка на тулу транскрибації дзвінків? хочу користуватись\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "у нас є корпоративна підписка на тулу транскрибації дзвінків? хочу користуватись",
+          "type": "access_request",
+          "app_mentions": [
+            "тула транскрибації дзвінків"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Якщо підписка існує, чи вона активна?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1670,
+      "out": 174,
+      "seconds": 2.94
+    }
+  },
+  "db2e533f922c6288f2c89208": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nа корп акаунт на дизайн-референс тулу ще живий? колись я його юзав, зараз зайти не можу і кредів не знайду у окті\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "а корп акаунт на дизайн-референс тулу ще живий? колись я його юзав, зараз зайти не можу і кредів не знайду у окті",
+          "type": "access_request",
+          "app_mentions": [
+            "дизайн-референс тул",
+            "окті"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які конкретно облікові записи або облікові дані потрібні?",
+            "Яка роль або доступ потрібен для користувача?"
+          ],
+          "signals": [
+            "prod_access"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1682,
+      "out": 188,
+      "seconds": 3.2
+    }
+  },
+  "87e829f569474e1ab2454d7f": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nклод-код вилітає, просить релогін через okta і не пускає. що робити?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "клод-код вилітає, просить релогін через okta і не пускає. що робити?",
+          "type": "access_request",
+          "app_mentions": [
+            "клод-код",
+            "okta"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Якщо ви не можете увійти — чи є у вас доступ до іншої системи, щоб підтвердити вашу ідентичність?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1665,
+      "out": 167,
+      "seconds": 2.85
+    }
+  },
+  "aa1aeb83762dc9a8f3cf82d3": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nщось уперлась в ліміт, не розумію де саме. кажуть це bigquery. допоможіть розібратись\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "щось уперлась в ліміт, не розумію де саме. кажуть це bigquery. допоможіть розібратись",
+          "type": "limits_quota",
+          "app_mentions": [
+            "bigquery"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно ліміт вичерпано?",
+            "Яка система чи функція використовується?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1671,
+      "out": 152,
+      "seconds": 2.62
+    }
+  },
+  "e0ee5b8da721f1bdd62fa220": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба підняти ліміти клода 5 людям з команди під ai-відео. список дам\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба підняти ліміти клода 5 людям з команди під ai-відео. список дам",
+          "type": "access_request",
+          "app_mentions": [
+            "кло́д"
+          ],
+          "subject": "multiple",
+          "missing_info": [
+            "Які саме ліміти потрібно підняти?",
+            "Яка роль/рівень доступу потрібна?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1665,
+      "out": 160,
+      "seconds": 2.72
+    }
+  },
+  "dc75faf4cbdf5d523cc81e56": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба перегенерувати ключі, старі здається злиті. деталі в треді\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "перегенерувати ключі, старі здається злиті",
+          "type": "secret_incident",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Які саме ключі потрібно перегенерувати?",
+            "Яка система або сервіс, де використовуються ці ключі?"
+          ],
+          "signals": [
+            "secret_compromise"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1660,
+      "out": 139,
+      "seconds": 2.37
+    }
+  },
+  "ae3696f547aa16b66bbc1d1a": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nстворила новий акаунт для роботи з рекламним кабінетом, треба щоб адмін схвалив\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "створила новий акаунт для роботи з рекламним кабінетом, треба щоб адмін схвалив",
+          "type": "access_request",
+          "app_mentions": [
+            "рекламним кабінетом"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка система, для якої потрібен доступ?",
+            "Яка роль потрібна (адмін, користувач тощо)?",
+            "Які конкретні привілеї потрібні?"
+          ],
+          "signals": [
+            "unverified_approval_claim",
+            "on_behalf"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1666,
+      "out": 186,
+      "seconds": 3.16
+    }
+  },
+  "793b7f9fc81905626607490e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпідключаю asana до slack, а в дропдауні проєктів порожньо. це через права чи тариф?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "підключаю asana до slack, а в дропдауні проєктів порожньо. це через права чи тариф?",
+          "type": "unclear",
+          "app_mentions": [
+            "asana",
+            "slack"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які саме права відсутні?",
+            "Яка тарифна планівка використовується?"
+          ],
+          "signals": [
+            "third_party_connector"
+          ],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 159,
+      "seconds": 2.72
+    }
+  },
+  "5df4f9b4dee74594db58a98e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nз okta зник один з market-intel сервісів і не пускає у віддалене середовище. поверніть плз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "з okta зник один з market-intel сервісів і не пускає у віддалене середовище. поверніть плз",
+          "type": "access_request",
+          "app_mentions": [
+            "okta"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який саме сервіс з market-intel був видалений?",
+            "Яка роль/доступ потрібен для віддаленого середовища?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1671,
+      "out": 171,
+      "seconds": 2.92
+    }
+  },
+  "dad9f1d663c6cfc240a10600": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nнам треба відповідати на відгуки в сторах, яка схема доступів/ключів для цього?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "нам треба відповідати на відгуки в сторах, яка схема доступів/ключів для цього?",
+          "type": "access_request",
+          "app_mentions": [
+            "сторах"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка система, для якої потрібні ключі/доступ?",
+            "Яка роль/рівень доступу потрібен?",
+            "Для якої мети потрібні ключі (наприклад, для відгуки в сторах)?"
+          ],
+          "signals": [],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1669,
+      "out": 190,
+      "seconds": 3.24
+    }
+  },
+  "abec4dcee565c2619319c2f3": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба тимчасовий доступ до однієї корп пошти (лежить у 1password), бо на ній завʼязані платежі. мені колега на тиждень шерив, але треба ще, можеш ти замість нього накинути?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба тимчасовий доступ до однієї корп пошти (лежить у 1password), бо на ній завʼязані платежі. мені колега на тиждень шерив, але треба ще, можеш ти замість нього накинути?",
+          "type": "access_request",
+          "app_mentions": [
+            "1password"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "На який строк потрібен доступ?",
+            "Хто є власником пошти?"
+          ],
+          "signals": [
+            "on_behalf"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1708,
+      "out": 213,
+      "seconds": 3.64
+    }
+  },
+  "9d5afbc8ee9b5e84fad23745": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне заходить у фб акаунт взагалі, пробував все, не помагає. що робити?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "Не заходить у фб акаунт взагалі, пробував все, не помагає. що робити?",
+          "type": "unclear",
+          "app_mentions": [
+            "фб"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які конкретно дії вже були спробовані?",
+            "Чи є доступ до інших сервісів, пов'язаних з акаунтом?",
+            "Чи виникає помилка при вході, і яка саме?"
+          ],
+          "signals": [
+            "credential_reset"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1663,
+      "out": 185,
+      "seconds": 3.14
+    }
+  },
+  "5d7c30b7cc3e1710105897e3": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба доступ до дашборда одного з продуктів + не виходить залогінитись\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба доступ до дашборда одного з продуктів",
+          "type": "access_request",
+          "app_mentions": [
+            "дашборда",
+            "продуктів"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка система (назва дашборда чи продукту)?",
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        },
+        {
+          "summary": "не виходить залогінитись",
+          "type": "login_diagnostic",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка система (назва дашборда чи продукту)?",
+            "Помилка, яку отримуєте?"
+          ],
+          "signals": [],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 238,
+      "seconds": 4.07
+    }
+  },
+  "9522a7c472f9f36c5dd94b8e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпотрібен viewer-доступ до аналітики залучення (tiktok, один з продуктів)\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "потрібен viewer-доступ до аналітики залучення (tiktok, один з продуктів)",
+          "type": "access_request",
+          "app_mentions": [
+            "tiktok"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка система (інші назви, якщо є)?",
+            "Для якої мети потрібен доступ?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1661,
+      "out": 141,
+      "seconds": 2.41
+    }
+  },
+  "36c340c77448d72ad0c0373f": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу нас закінчились кредити на ai-тулі і через це став дабінг! поповніть терміново\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "у нас закінчились кредити на ai-тулі і через це став дабінг! поповніть терміново",
+          "type": "access_request",
+          "app_mentions": [
+            "ai-тулі"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які конкретно кредити? Якщо це ліцензії чи ліміти SaaS — які саме? Якщо це ресурси — які саме? Якщо це інші кредити — які саме?"
+          ],
+          "signals": [
+            "urgency",
+            "prompt_pressure"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 193,
+      "seconds": 3.32
+    }
+  },
+  "9c4001f850fd586d53d76f24": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте доступ до growthbook, колеги вже мають а я ні\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте доступ до growthbook, колеги вже мають а я ні",
+          "type": "access_request",
+          "app_mentions": [
+            "growthbook"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.9
+        }
+      ]
+    },
+    "usage": {
+      "in": 1649,
+      "out": 115,
+      "seconds": 1.97
+    }
+  },
+  "93298ddc301764d251611c04": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nчому в мене ліміти на одній geminiі так швидко закінчуються? у нас з колегою однакові пакети, але у нього жодного разу не закінчувалось. гляньте плз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "звернення до лімітів на gemini",
+          "type": "usage_report",
+          "app_mentions": [
+            "gemini"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно пакет використовується?",
+            "Які дії виконуються, що викликають високий споживання?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1699,
+      "out": 141,
+      "seconds": 2.43
+    }
+  },
+  "c0d01a7dfae326533a99283b": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nасап!! видаліть будь ласка нотатку в 1password зі старим api-ключем рекламної платформи, він скомпрометований\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "видаліть нотатку в 1password зі старим api-ключем рекламної платформи",
+          "type": "secret_incident",
+          "app_mentions": [
+            "1password"
+          ],
+          "subject": "self",
+          "missing_info": [],
+          "signals": [
+            "secret_compromise",
+            "urgency"
+          ],
+          "confidence": 0.95
+        }
+      ]
+    },
+    "usage": {
+      "in": 1676,
+      "out": 109,
+      "seconds": 1.88
+    }
+  },
+  "92ad7b42ddbb1989f1f3da10": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне можу зайти в airtable через okta, викидає помилку\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "не можу зайти в airtable через okta, викидає помилку",
+          "type": "access_request",
+          "app_mentions": [
+            "airtable",
+            "okta"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретно помилка виходить?",
+            "Чи спробували скинути пароль або MFA?"
+          ],
+          "signals": [
+            "security_finding"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1649,
+      "out": 130,
+      "seconds": 2.24
+    }
+  },
+  "d6cc3d42c80d01e4dbd42f85": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nмені потрібен менеджерський ключ до app store по продукту, я відповідаю за реліз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "мені потрібен менеджерський ключ до app store по продукту, я відповідаю за реліз",
+          "type": "access_request",
+          "app_mentions": [
+            "app store"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретно роль потрібна (наприклад, менеджер, адмін)?",
+            "Який продукт у App Store?"
+          ],
+          "signals": [
+            "prod_access"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1664,
+      "out": 147,
+      "seconds": 2.51
+    }
+  },
+  "ef7531334f3b7a56cb6579e5": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nуперлись в квоту bigquery, треба підняти, аналітика стоїть\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "уперлись в квоту bigquery, треба підняти, аналітика стоїть",
+          "type": "limits_quota",
+          "app_mentions": [
+            "bigquery"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно ресурс уперся (квота на запити, сховище, інші)?",
+            "Які дії не вдаються через обмеження?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1655,
+      "out": 155,
+      "seconds": 2.71
+    }
+  },
+  "dfbe4797713c72989abe86d6": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nлокалізаторам потрібен новий api-ключ до ai-моделі, зробіть плз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "локалізаторам потрібен новий api-ключ до ai-моделі, зробіть плз",
+          "type": "access_request",
+          "app_mentions": [
+            "ai-моделі"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Який конкретно API-ключ потрібен?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1660,
+      "out": 148,
+      "seconds": 2.55
+    }
+  },
+  "390d9e9e95f1ead17115b271": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк правильно підключити airtable до клода через персональний токен (PAT)?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "як правильно підключити airtable до клода через персональний токен (PAT)?",
+          "type": "unclear",
+          "app_mentions": [
+            "airtable",
+            "кло"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Які конкретні дії потрібно виконати для підключення?",
+            "Які права має PAT?",
+            "Які налаштування потрібні в клода?"
+          ],
+          "signals": [
+            "third_party_connector"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1655,
+      "out": 172,
+      "seconds": 2.95
+    }
+  },
+  "39c937bd0ee143b3b70bd73b": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба адмінські права в app store connect і play console по одному з нових продуктів\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба адмінські права в app store connect і play console по одному з нових продуктів",
+          "type": "access_request",
+          "app_mentions": [
+            "app store connect",
+            "play console"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який продукт?",
+            "Яка конкретна роль потрібна (адмін чи інша)?"
+          ],
+          "signals": [
+            "privileged_access",
+            "broad_scope"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 142,
+      "seconds": 2.45
+    }
+  },
+  "230745ff28dfb4a962e917d4": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможна доступ до speechify?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "можна доступ до speechify?",
+          "type": "access_request",
+          "app_mentions": [
+            "speechify"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1636,
+      "out": 102,
+      "seconds": 1.76
+    }
+  },
+  "ac73753723cee84519cb8781": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nапрувніть будь ласка конектор make для клода, треба під автоматизацію\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "апрувніть будь ласка конектор make для клода, треба під автоматизацію",
+          "type": "access_request",
+          "app_mentions": [
+            "кло",
+            "make"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (наприклад, адмін, користувач)?",
+            "Який конкретно конектор потрібен?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1659,
+      "out": 147,
+      "seconds": 2.63
+    }
+  },
+  "f14b5c2ff9c2662b0e509870": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nу людини сьогодні останній день, треба забрати розширену підписку клода\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "у людини сьогодні останній день, треба забрати розширену підписку клода",
+          "type": "offboarding",
+          "app_mentions": [
+            "клоуд"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Хто саме має бути звільнений?",
+            "Яка конкретно розширення підписки?"
+          ],
+          "signals": [
+            "offboarding"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1664,
+      "out": 143,
+      "seconds": 2.66
+    }
+  },
+  "dbc1559ac1dbde0d2f6afa33": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба завести пошту і перенести ліцензію market-intel тули на новий домен\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба завести пошту і перенести ліцензію market-intel тули на новий домен",
+          "type": "access_request",
+          "app_mentions": [
+            "market-intel тули"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Який новий домен?",
+            "Хто має отримати доступ?",
+            "Яка роль/рівень доступу потрібен?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 154,
+      "seconds": 2.86
+    }
+  },
+  "a55c91dd56b5a11532ce6785": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпривіт, а ти вже закинув анонс у робочому каналі про степи міграції слаку?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "запит про анонс міграції слаку",
+          "type": "unclear",
+          "app_mentions": [
+            "слаку"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Який конкретно анонс?",
+            "Для якої групи користувачів?",
+            "Які деталі міграції?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 133,
+      "seconds": 2.4
+    }
+  },
+  "2a7fc5ed277e5d0797e0d30e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпривіт, хелпдеск тупить, можеш допомогти пушнути їх по створенню сервісних пошт під два нові продукти\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "допомогти пушнути хелпдеск по створенню сервісних пошт під два нові продукти",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Які продукти?",
+            "Які сервісні пошти потрібні?",
+            "Хто має отримати доступ?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1678,
+      "out": 157,
+      "seconds": 2.92
+    }
+  },
+  "d067fe7dc0bdf4b369789b44": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк працює апрув запитів коли звертаєшся у хелпдеск? хто має підтверджувати?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "як працює апрув запитів коли звертаєшся у хелпдеск? хто має підтверджувати?",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Який конкретно процес апруву запитів мається на увазі?",
+            "Яка система або сервіс, до якого звертається запит?"
+          ],
+          "signals": [
+            "security_policy_change"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1673,
+      "out": 172,
+      "seconds": 3.2
+    }
+  },
+  "1cdaf209be0a96262f8c4eed": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nприйшов інвайт, але ліцензія не активувалась, баг якийсь. фіксіть\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "прийшов інвайт, але ліцензія не активувалась, баг якийсь. фіксіть",
+          "type": "license_issue",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка система, для якої не активувалась ліцензія?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1666,
+      "out": 131,
+      "seconds": 2.45
+    }
+  },
+  "d716672da9894be32c25ad99": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nПривіт! треба зробити міграцію домену + перенос ліцензії + налаштування DMARC. коли зможеш взяти?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "зробити міграцію домену + перенос ліцензії + налаштування DMARC",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка система або служба, для якої потрібна міграція домену?",
+            "Хто є власником ліцензії, яку потрібно перенести?",
+            "Чи є додаткові деталі щодо налаштування DMARC?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1678,
+      "out": 190,
+      "seconds": 3.53
+    }
+  },
+  "2130ea604ef84882a790a77e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк заходити у віддалене середовище для market-intel тули? не розберусь\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "як заходити у віддалене середовище для market-intel тули? не розберусь",
+          "type": "unclear",
+          "app_mentions": [
+            "market-intel тули"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яким чином користувач намагається отримати доступ?",
+            "Які інструменти використовуються для віддаленого доступу?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1660,
+      "out": 154,
+      "seconds": 2.79
+    }
+  },
+  "ea41a13a44627895ecb86941": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтерміново треба доступ через okta + поповнити баланс на тулі, треба асап до 12, бо зустріч з партнерами\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "терміново треба доступ через okta",
+          "type": "access_request",
+          "app_mentions": [
+            "okta"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.8
+        },
+        {
+          "summary": "поповнити баланс на тулі",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Який тул?",
+            "Як поповнити баланс (метод оплати, кількість)?"
+          ],
+          "signals": [
+            "urgency",
+            "cost_impact"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1674,
+      "out": 213,
+      "seconds": 3.63
+    }
+  },
+  "e0c94adcebf8b4d19dbefd9c": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nакаунт на аналітичній тулі глючить, схоже перевантажений. можна мені окремий логін?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "акаунт на аналітичній тулі глючить, схоже перевантажений. можна мені окремий логін?",
+          "type": "access_request",
+          "app_mentions": [
+            "аналітичній тулі"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка аналітична тулі?",
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Якщо окремий логін, то які обмеження?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1669,
+      "out": 184,
+      "seconds": 3.26
+    }
+  },
+  "27878d91a974109d12c9b28d": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nнова команда, треба налаштувати менеджмент api-ключа Gemini API\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "нова команда, треба налаштувати менеджмент api-ключа Gemini API",
+          "type": "access_request",
+          "app_mentions": [
+            "Gemini API"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка роль потрібна (наприклад, адмін, користувач)?",
+            "Для кого потрібен доступ (ім'я або email)?",
+            "Який конкретно API-ключ потрібно налаштувати?"
+          ],
+          "signals": [],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1653,
+      "out": 169,
+      "seconds": 3.08
+    }
+  },
+  "ae05750cc1ead5066df67cac": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nхочу підняти собі ліміт у гпт, що для цього треба? лід має апрувити?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "хочу підняти собі ліміт у гпт, що для цього треба? лід має апрувити?",
+          "type": "access_request",
+          "app_mentions": [
+            "гпт"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно ліміт потрібно підняти (наприклад, кількість запитів, об'єм даних)?",
+            "Яка мета підвищення ліміту?"
+          ],
+          "signals": [
+            "unverified_approval_claim"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1668,
+      "out": 185,
+      "seconds": 3.27
+    }
+  },
+  "6282a9dc7a2124faffa83293": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nчому у мене 2 аккаунта для sensor tower? і щось не можу зайти ні в один\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "чому у мене 2 аккаунта для sensor tower? і щось не можу зайти ні в один",
+          "type": "unclear",
+          "app_mentions": [
+            "sensor tower"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Які ім'я користувача та пароль використовуються для входу?",
+            "Чи є проблеми з підключенням до системи (наприклад, інтернет, сервіс не працює)?"
+          ],
+          "signals": [],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 172,
+      "seconds": 2.92
+    }
+  },
+  "d1317c118c9a8bdf1d57918d": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпрошу видати доступ до рекламного business manager моїй колезі з усіма фін показниками, вона в моїй команді\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "прошу видати доступ до рекламного business manager моїй колезі з усіма фін показниками, вона в моїй команді",
+          "type": "access_request",
+          "app_mentions": [
+            "business manager"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Які саме фінансові показники потрібні?"
+          ],
+          "signals": [
+            "broad_scope",
+            "on_behalf"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 164,
+      "seconds": 2.77
+    }
+  },
+  "cbd9b9de12884d410fd38a32": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nзаводимо нового підрядника по виробництву серіалів — треба тули, api, 1password і пошта\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "Додати доступ до систем для нового підрядника",
+          "type": "access_request",
+          "app_mentions": [
+            "тули",
+            "api",
+            "1password",
+            "пошта"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Які ролі потрібні для доступу до кожної системи?",
+            "Які облікові записи або ідентичності вже існують для підрядника?"
+          ],
+          "signals": [
+            "external_party"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 163,
+      "seconds": 2.77
+    }
+  },
+  "cb0b482b34fe37a14bee65d7": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпідключіть плз mcp-конектор нашої внутрішньої креатив-тули до клода\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "підключіть плз mcp-конектор нашої внутрішньої креатив-тули до клода",
+          "type": "access_request",
+          "app_mentions": [
+            "креатив-тул",
+            "кло"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна для підключення конектора?",
+            "Які конкретні привілеї потрібні для роботи з MCP-конектором?"
+          ],
+          "signals": [
+            "third_party_connector"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1663,
+      "out": 168,
+      "seconds": 2.86
+    }
+  },
+  "2061e081cf4729516beba368": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба порахувати кількість користувачів у слаці на всіх наших воркспейсах, тотал сума треба\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба порахувати кількість користувачів у слаці на всіх наших воркспейсах, тотал сума треба",
+          "type": "data_export",
+          "app_mentions": [
+            "слаця"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Які саме дані потрібно експортувати (наприклад, кількість користувачів, їхні ролі, воркспейси)?",
+            "Як потрібно виконати експорт (файл, API, інші способи)?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1674,
+      "out": 206,
+      "seconds": 3.53
+    }
+  },
+  "6d3a4a0b700811eb12ea78fd": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nконектор у клоді сам вимикається, не розумію чому. до кого з цим?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "конектор у клоді сам вимикається, не розумію чому. до кого з цим?",
+          "type": "unclear",
+          "app_mentions": [
+            "кло́д"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Деталі проблеми з конектором",
+            "Які дії виконували перед вимкненням",
+            "Які системи/застосунки використовуються з конектором"
+          ],
+          "signals": [
+            "security_finding"
+          ],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 163,
+      "seconds": 2.77
+    }
+  },
+  "dad7795233c8ac5223e200f1": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба api-ключ до ai-моделі під автоматизацію дубляжу\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба api-ключ до ai-моделі під автоматизацію дубляжу",
+          "type": "access_request",
+          "app_mentions": [
+            "ai-моделі"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка конкретно ai-модель потрібна?",
+            "Яка роль/рівень доступу потрібен (наприклад, viewer, admin)?",
+            "На який строк потрібен ключ?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1656,
+      "out": 171,
+      "seconds": 2.91
+    }
+  },
+  "b8d401c639d73a96313604ea": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nмені треба доступ до всіх наших market-intel/spy тул, по підписках\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "мені треба доступ до всіх наших market-intel/spy тул, по підписках",
+          "type": "access_request",
+          "app_mentions": [
+            "market-intel/spy"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Які конкретні підписки потрібні?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1654,
+      "out": 155,
+      "seconds": 2.67
+    }
+  },
+  "60f27cd4aa07f60b1cbb4873": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне можу залогінитись у тулу для лігал документів, чомусь не пускає, хоча пароль логін вірний, моя колега тільки що по ньому зайшла\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "Не можу залогінитись у тулу для лігал документів",
+          "type": "access_request",
+          "app_mentions": [
+            "тула"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Який конкретно ресурс у 'тулі' потрібен?"
+          ],
+          "signals": [
+            "on_behalf"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1693,
+      "out": 146,
+      "seconds": 2.62
+    }
+  },
+  "7c592bde9c9ccd87c214c480": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможна пошерити vault в 1password двом моїм колегам?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "можна пошерити vault в 1password двом моїм колегам?",
+          "type": "access_request",
+          "app_mentions": [
+            "1password"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Хто саме колеги (імена або емейли)?"
+          ],
+          "signals": [
+            "mirror_access"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1650,
+      "out": 148,
+      "seconds": 2.67
+    }
+  },
+  "4d1b1786fdcbfd5701da42b7": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба корпоративний apple id для testflight і дев-задач\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба корпоративний apple id для testflight і дев-задач",
+          "type": "access_request",
+          "app_mentions": [
+            "testflight"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (користувач, адмін тощо)?",
+            "Які саме дев-задачі?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1648,
+      "out": 127,
+      "seconds": 2.2
+    }
+  },
+  "2f91fc086c3f69f8b514a76b": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпоповніть extra usage на клоді будь ласка\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "поповніть extra usage на клоді будь ласка",
+          "type": "usage_report",
+          "app_mentions": [
+            "клод"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно ресурс (CPU, RAM, storage) потрібно поповнити?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1647,
+      "out": 118,
+      "seconds": 2.08
+    }
+  },
+  "36135aa6abd73d94f48b79e8": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте мені перегляд (view) до внутрішнього проекту продуктів у асані\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте мені перегляд (view) до внутрішнього проекту продуктів у асані",
+          "type": "access_request",
+          "app_mentions": [
+            "асані"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який внутрішній проект продуктів?",
+            "Яка конкретна роль або обмеження доступу?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1658,
+      "out": 134,
+      "seconds": 2.35
+    }
+  },
+  "50d2ecc865a14074296d2484": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба api-ключ до тула аналітики з команди Drama, який скоуп брати? і хто апрувить\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба api-ключ до тула аналітики з команди Drama, який скоуп брати? і хто апрувить",
+          "type": "access_request",
+          "app_mentions": [
+            "тул аналітики"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (наприклад, viewer, admin тощо)?",
+            "Хто буде апрувувати цей запит?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1665,
+      "out": 156,
+      "seconds": 2.66
+    }
+  },
+  "ec886379260f5be92f600c82": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте доступ до tableau, і чи можна перейти на дешевний рід-онлі тариф? мені не треба повний доступ\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте доступ до tableau",
+          "type": "access_request",
+          "app_mentions": [
+            "tableau"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        },
+        {
+          "summary": "чи можна перейти на дешевий рід-онлі тариф",
+          "type": "license_request",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Який поточний тариф?",
+            "Які обмеження дешевого тарифу?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1668,
+      "out": 201,
+      "seconds": 3.47
+    }
+  },
+  "c7ad7705832d0f52b61380d7": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпитання по ліцензуванню coda — скільки коштує доступ док-мейкерів, є знижка?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "питання по ліцензуванню coda — скільки коштує доступ док-мейкерів, є знижка?",
+          "type": "license_request",
+          "app_mentions": [
+            "coda"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка кількість користувачів, які потребують ліцензій?",
+            "Який термін дії ліцензій?"
+          ],
+          "signals": [
+            "financial_data"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1668,
+      "out": 162,
+      "seconds": 2.86
+    }
+  },
+  "883ffbaebffc4380a5e43954": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба доступ через okta до композитів\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба доступ через okta до композитів",
+          "type": "access_request",
+          "app_mentions": [
+            "okta",
+            "композитів"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Для якої системи потрібен доступ?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1643,
+      "out": 136,
+      "seconds": 3.08
+    }
+  },
+  "e8544b28f45e98a0ba104acb": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nя знайшов 2 ліцензії, якими ніхто не користується, бо перейшли на інший сервіс. Що з ними робити?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "я знайшов 2 ліцензії, якими ніхто не користується, бо перейшли на інший сервіс. Що з ними робити?",
+          "type": "license_request",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Які саме ліцензії? Назва продукту, серійний номер, інші деталі."
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1681,
+      "out": 157,
+      "seconds": 2.97
+    }
+  },
+  "d8bc3478ce48a3593d2778ed": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба інвайт в n8n\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба інвайт в n8n",
+          "type": "access_request",
+          "app_mentions": [
+            "n8n"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (наприклад, користувач, адмін)?",
+            "Для якої мети потрібен доступ?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1642,
+      "out": 127,
+      "seconds": 2.17
+    }
+  },
+  "8f44a184439b293126e2410e": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпідніміть ліміти на моєму api-ключі, і питання по підписці, схоже вона злетіла. можеш карту підключити на оплату?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "підніміть ліміти на моєму api-ключі",
+          "type": "limits_quota",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Який API-ключ?",
+            "Які саме ліміти потрібно підняти?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        },
+        {
+          "summary": "питання по підписці, схоже вона злетіла",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка підписка?",
+            "Яка система?"
+          ],
+          "signals": [],
+          "confidence": 0.6
+        },
+        {
+          "summary": "можеш карту підключити на оплату?",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка карта?",
+            "Яка система для оплати?"
+          ],
+          "signals": [],
+          "confidence": 0.6
+        }
+      ]
+    },
+    "usage": {
+      "in": 1688,
+      "out": 286,
+      "seconds": 4.95
+    }
+  },
+  "a0177557612799fe878203f1": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдопоможіть налаштувати 2fa на корп пошті\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "допоможіть налаштувати 2fa на корп пошті",
+          "type": "security_policy_change",
+          "app_mentions": [
+            "корп пошті"
+          ],
+          "subject": "self",
+          "missing_info": [],
+          "signals": [
+            "credential_reset"
+          ],
+          "confidence": 0.9
+        }
+      ]
+    },
+    "usage": {
+      "in": 1652,
+      "out": 107,
+      "seconds": 2.01
+    }
+  },
+  "190d0f44fbdeb1173e74f1b9": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nПідкажи, як замовити нову техніку собі?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "Підкажи, як замовити нову техніку собі?",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Який тип техніки потрібно замовити?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1650,
+      "out": 108,
+      "seconds": 1.88
+    }
+  },
+  "4270ee1bfb1a1243f1ebeb39": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтула пише що закінчились токени, а їх начебто має бути. гляньте\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "тула пише що закінчились токени, а їх начебто має бути. гляньте",
+          "type": "unclear",
+          "app_mentions": [
+            "тула"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка система або служба, до якої відносяться токени?",
+            "Яка роль або доступ потрібен?",
+            "Які конкретні токени відсутні?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1663,
+      "out": 171,
+      "seconds": 2.96
+    }
+  },
+  "296cfc880091a2c4e0c2a96a": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможна виставити ліміт витрат на моєму api-ключі, щоб не перевитратити?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "можна виставити ліміт витрат на моєму api-ключі, щоб не перевитратити?",
+          "type": "limits_quota",
+          "app_mentions": [
+            "api-ключі"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно API-ключ?",
+            "Який тип ліміту (витрати, запити, час)?",
+            "Які обмеження потрібно встановити?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1663,
+      "out": 160,
+      "seconds": 2.79
+    }
+  },
+  "1454223d852f9e5e40be2e80": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nне заходить у tableau, крутиться і все\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "не заходить у tableau, крутиться і все",
+          "type": "access_request",
+          "app_mentions": [
+            "tableau"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Якщо це не перший раз, чи було це колись працювало?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1641,
+      "out": 137,
+      "seconds": 2.37
+    }
+  },
+  "c8d96a6790477acc0631f4bb": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба токени до двох ai-моделей (gemini і claude api)\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба токени до двох ai-моделей (gemini і claude api)",
+          "type": "access_request",
+          "app_mentions": [
+            "gemini",
+            "claude api"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (наприклад, користувач, адмін)?",
+            "На який строк потрібні токени?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1653,
+      "out": 154,
+      "seconds": 2.66
+    }
+  },
+  "2d06d2d2e7261e65084362bf": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nв колеги не працює доступ до tableau, можете глянути його права?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "в колеги не працює доступ до tableau, можете глянути його права?",
+          "type": "access_request",
+          "app_mentions": [
+            "tableau"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Хто є колегою? (ім'я або email)"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1653,
+      "out": 138,
+      "seconds": 2.38
+    }
+  },
+  "1c9957c301e6859df871304b": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба підняти ліміти клода 9 людям, список нижче\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба підняти ліміти клода 9 людям, список нижче",
+          "type": "access_request",
+          "app_mentions": [
+            "кло́д"
+          ],
+          "subject": "multiple",
+          "missing_info": [
+            "Які саме ліміти потрібно підняти?",
+            "Де знаходиться список людей?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1654,
+      "out": 133,
+      "seconds": 2.89
+    }
+  },
+  "785217726d0e79cff4abeb38": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба доступ до розділу диспутів у платіжці, на всіх спейсах\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба доступ до розділу диспутів у платіжці, на всіх спейсах",
+          "type": "access_request",
+          "app_mentions": [
+            "платіжці"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Які конкретні спейси потрібні? (якщо не всі)"
+          ],
+          "signals": [
+            "broad_scope",
+            "prod_access"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1659,
+      "out": 163,
+      "seconds": 2.81
+    }
+  },
+  "d1b270798d6915045295ac6a": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпроходжу безпековий тест і там помилки в блоці про паролі/фішинг, це баг чи фіча?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "проходжу безпековий тест і там помилки в блоці про паролі/фішинг, це баг чи фіча?",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка система або інструмент використовується для безпекового тесту?",
+            "Які саме помилки виявлено в блоці про паролі/фішинг?"
+          ],
+          "signals": [
+            "security_finding"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1668,
+      "out": 174,
+      "seconds": 3.28
+    }
+  },
+  "8174f40cf4a2d89d87c6956b": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте доступ до аналітичного середовища ще одному колезі\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте доступ до аналітичного середовища ще одному колезі",
+          "type": "access_request",
+          "app_mentions": [
+            "аналітичного середовища"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Хто саме колега, якого потрібно додати?"
+          ],
+          "signals": [],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1653,
+      "out": 155,
+      "seconds": 2.69
+    }
+  },
+  "ca9d3279615b5953d3c5e814": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможна підняти ліміт клода на нашому спільному командному акаунті? ми його разом юзаємо\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "можна підняти ліміт клода на нашому спільному командному акаунті? ми його разом юзаємо",
+          "type": "limits_quota",
+          "app_mentions": [
+            "кло́д"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Який конкретно ліміт потрібно підняти?",
+            "На який рівень?"
+          ],
+          "signals": [
+            "mirror_access"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1670,
+      "out": 149,
+      "seconds": 2.82
+    }
+  },
+  "984520475e59f55fe83c7c50": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтерміново заблокуйте всі доступи співробітнику — сьогодні останній день, деталі в тред\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "терміново заблокуйте всі доступи співробітнику — сьогодні останній день, деталі в тред",
+          "type": "access_request",
+          "app_mentions": [],
+          "subject": "other",
+          "missing_info": [
+            "Які конкретно доступи потрібно заблокувати?",
+            "Які системи впливають?"
+          ],
+          "signals": [
+            "urgency",
+            "offboarding"
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1671,
+      "out": 156,
+      "seconds": 2.72
+    }
+  },
+  "568ca4fd61ad60513db72374": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк налаштувати MFA у мене на андроїд? щось не розумію\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "як налаштувати MFA у мене на андроїд? щось не розумію",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яка система або сервіс, для якого потрібно налаштувати MFA?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1659,
+      "out": 128,
+      "seconds": 2.19
+    }
+  },
+  "95b68feb9a2181204ea5c445": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпоясніть як влаштовані права в клоді на рівні організації\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "поясніть як влаштовані права в клоді на рівні організації",
+          "type": "policy_question",
+          "app_mentions": [
+            "кло́д"
+          ],
+          "subject": "unknown",
+          "missing_info": [],
+          "signals": [],
+          "confidence": 0.9
+        }
+      ]
+    },
+    "usage": {
+      "in": 1660,
+      "out": 105,
+      "seconds": 1.82
+    }
+  },
+  "28cdcbda2b18c0b1a2b54297": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможеш інструкцію закинути, як працювати з 1pass? до цього не працював з такими сервісами\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "можеш інструкцію закинути, як працювати з 1pass? до цього не працював з такими сервісами",
+          "type": "unclear",
+          "app_mentions": [
+            "1pass"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який конкретно сервіс або функціонал 1pass потрібно описати?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1675,
+      "out": 148,
+      "seconds": 2.56
+    }
+  },
+  "33e73bce1cfbce66ea25ff9a": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nтреба інвайт у нашу організацію клода з преміумом (2 місця), і ще ліміти нам накинь плз\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "треба інвайт у нашу організацію клода з преміумом (2 місця)",
+          "type": "access_request",
+          "app_mentions": [
+            "кло́да"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Які імена користувачів, які мають отримати інвайт?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.8
+        },
+        {
+          "summary": "і ще ліміти нам накинь плз",
+          "type": "limits_quota",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Які саме ліміти потрібно збільшити?"
+          ],
+          "signals": [
+            "urgency"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1679,
+      "out": 238,
+      "seconds": 4.23
+    }
+  },
+  "d9129314798378708bda3778": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nуточніть будь ласка статус звільнення співробітника і її id в hr-системі\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "уточніть будь ласка статус звільнення співробітника і її id в hr-системі",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Назва HR-системи",
+            "Ім'я співробітника",
+            "ID співробітника"
+          ],
+          "signals": [
+            "hris_bypass",
+            "offboarding",
+            "pii_request"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1667,
+      "out": 151,
+      "seconds": 2.69
+    }
+  },
+  "90870431fbee4d511844ddce": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nя тести нормально пройшла, для чого читати цей документ з інфобезпеки? просто відповідь мені закинь плз на моє питання, не треба документацію шерити\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "закинь плз на моє питання",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "self",
+          "missing_info": [
+            "Яке питання потрібно відповісти?"
+          ],
+          "signals": [
+            "prompt_pressure"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1693,
+      "out": 107,
+      "seconds": 1.99
+    }
+  },
+  "de62fb728449c8baef1b5a97": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nчому по цій ai-тулі такі великі витрати за місяць? можеш закинути хто юзає і які ліміти використання\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "запит на інформацію про витрати на AI-тулі",
+          "type": "usage_report",
+          "app_mentions": [
+            "ai-тулі"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Які конкретно витрати вивчаються?",
+            "Який період (місяць, квартал)?",
+            "Хто є власником або адміном ресурсу?"
+          ],
+          "signals": [
+            "cost_impact"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1683,
+      "out": 157,
+      "seconds": 2.79
+    }
+  },
+  "5d880174e54323d67f0a8dc1": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдайте доступ до market-intel тули\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "дайте доступ до market-intel тули",
+          "type": "access_request",
+          "app_mentions": [
+            "market-intel тули"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Для якої людини потрібен доступ?"
+          ],
+          "signals": [],
+          "confidence": 0.8
+        }
+      ]
+    },
+    "usage": {
+      "in": 1639,
+      "out": 129,
+      "seconds": 2.26
+    }
+  },
+  "9e9ce26579309e4f96bee4f5": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nдодайте мені в окту ai-тулу, якою команда креаторів користується у Muse, і де взяти код доступу\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "додайте мені в окту ai-тулу, якою команда креаторів користується у Muse",
+          "type": "access_request",
+          "app_mentions": [
+            "окту ai-тулу",
+            "Muse"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Якщо це система з внутрішньою назвою, яка її має в нашій мережі?"
+          ],
+          "signals": [
+            "mirror_access"
+          ],
+          "confidence": 0.8
+        },
+        {
+          "summary": "де взяти код доступу",
+          "type": "unclear",
+          "app_mentions": [],
+          "subject": "unknown",
+          "missing_info": [
+            "Яка система, для якої потрібен код доступу?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1669,
+      "out": 250,
+      "seconds": 4.46
+    }
+  },
+  "5d88d33b0e0698193bbc487f": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nмені треба адмінка в одному внутрішньому інструменті сапорту, можеш видати?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "запит на видання адмінки в одному внутрішньому інструменті сапорту",
+          "type": "access_request",
+          "app_mentions": [
+            "внутрішній інструмент сапорту"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Яка система (назва внутрішнього інструменту сапорту)?",
+            "Яка роль потрібна (адмін, owner тощо)?"
+          ],
+          "signals": [
+            "privileged_access"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1662,
+      "out": 171,
+      "seconds": 3.19
+    }
+  },
+  "5c3201850568eaf21478616c": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк підключити coda до клода через мср? можеш гайд закинути степ бай степ?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "як підключити coda до клода через мср? можеш гайд закинути степ бай степ?",
+          "type": "unclear",
+          "app_mentions": [
+            "coda",
+            "кло",
+            "мср"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Що саме потрібно підключити (функція, інтеграція, API)?",
+            "Які конкретні кроки вимагаються?",
+            "Які дані потрібно передати?"
+          ],
+          "signals": [
+            "third_party_connector"
+          ],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1659,
+      "out": 189,
+      "seconds": 3.43
+    }
+  },
+  "aad86f911e24d788d77277e7": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nпідкажи, а як взагалі зайти у окту і що це таке?\n</request>",
+    "output": {
+      "is_iam": false,
+      "sub_requests": [
+        {
+          "summary": "запит про інформацію про систему окту",
+          "type": "unclear",
+          "app_mentions": [
+            "окту"
+          ],
+          "subject": "unknown",
+          "missing_info": [
+            "Що саме потрібно знати про систему (функціонал, доступ, інструкції)?"
+          ],
+          "signals": [],
+          "confidence": 0.3
+        }
+      ]
+    },
+    "usage": {
+      "in": 1656,
+      "out": 122,
+      "seconds": 2.37
+    }
+  },
+  "ebf23aa37e9ba5eb4478bd69": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nяк мені авторизуватись у слак?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "як мені авторизуватись у слак?",
+          "type": "unclear",
+          "app_mentions": [
+            "слак"
+          ],
+          "subject": "self",
+          "missing_info": [
+            "Який спосіб авторизації потрібен (наприклад, через SSO, пароль, MFA)?",
+            "Які дані вже наявні для авторизації?"
+          ],
+          "signals": [],
+          "confidence": 0.5
+        }
+      ]
+    },
+    "usage": {
+      "in": 1643,
+      "out": 141,
+      "seconds": 2.62
+    }
+  },
+  "e199ac3d0e179b70d9e17944": {
+    "model": "ollama:qwen3:14b",
+    "prompt": "classify_v2.md",
+    "input": "<request>\nможеш підказати, як створити проект у асані, щоб доступ був тільки у мене і у ліда?\n</request>",
+    "output": {
+      "is_iam": true,
+      "sub_requests": [
+        {
+          "summary": "як створити проект у асані, щоб доступ був тільки у мене і у ліда",
+          "type": "access_request",
+          "app_mentions": [
+            "асані"
+          ],
+          "subject": "other",
+          "missing_info": [
+            "Яка роль потрібна (перегляд чи редагування)?",
+            "Хто є лідом?"
+          ],
+          "signals": [
+            "broad_scope"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    "usage": {
+      "in": 1669,
+      "out": 150,
+      "seconds": 2.8
+    }
+  }
+}
