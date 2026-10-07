@@ -18,9 +18,37 @@
 
 Головний принцип: **немає source of truth «хто-що-має-мати»**. Тому бот не намагається її вгадати. Розбіжність джерел — сигнал віддати людині.
 
+### Вимоги й припущення
+
+| | |
+|---|---|
+| **Функціональні** | для кожного звернення: тип, чого бракує, app / entitlement, чи потрібен апрув і чий, ризик-сигнали, маршрут + дія (чернетка, KB, ескалація) з поясненням |
+| **Нефункціональні** | детермінізм (той самий розбір → той самий маршрут); fail-closed; аудит кожного рішення; секрети не виходять за межу redaction; вартість ≈ $0 |
+| **Обмеження** | одна людина в команді; немає source of truth «хто-що-має-мати»; HRIS без SCIM; довгий хвіст non-SSO SaaS; лише моки для act-side; ~8 год на прототип |
+| **Навантаження (припущення)** | сотні співробітників → десятки звернень на день; пікове навантаження не важливе, важливі латентність відповіді в Slack і якість рішення |
+
 ---
 
 ## 1. Схема
+
+### Конвеєр рішення: intake → парсер → валідація → злиття сигналів → policy → зона
+
+```mermaid
+flowchart LR
+  I["Intake<br/>Slack event → n8n<br/>(валідація події, автор = event.user)"] --> R["Redact<br/>секрети → [REDACTED]"]
+  R --> P["LLM-парсер<br/>tool use, строга схема<br/>(rules — fallback)"]
+  P --> V{"Валідація схеми<br/>enum типів і сигналів,<br/>clamp впевненості"}
+  V -->|невалідно| FC["fail-closed:<br/>unclear, conf 0"]
+  V --> G["Заземлення<br/>summary / згадки лише з тексту"]
+  FC --> G
+  G --> M["Злиття сигналів<br/>text ∪ llm ∪ read ∪ catalog<br/>regex-підлога для всіх підзапитів"]
+  M --> PE["Policy engine<br/>базовий маршрут → hard rules (лише вгору)<br/>→ AUTO preconditions → NEED_INFO → KB"]
+  PE --> Z1["AUTO<br/>allowlist + read-side"]
+  PE --> Z2["DEFLECT<br/>KB / черга"]
+  PE --> Z3["HUMAN<br/>апрув · HUMAN-ONLY · SECURITY"]
+```
+
+Зони й критерії входу — [`docs/zones.md`](zones.md). Чому LLM лише парсить — [ADR-0001](adr/0001-llm-parser-not-judge.md); чому невизначеність веде вгору — [ADR-0002](adr/0002-fail-closed.md); як проведено межі зон — [ADR-0003](adr/0003-zone-boundaries.md).
 
 ### Потік одного звернення
 
@@ -95,14 +123,16 @@ flowchart TD
 
 ## 2. Спектр маршрутів і межі між ними
 
+Сім маршрутів групуються в три зони ([`zones.md`](zones.md)): **AUTO** = AUTO_RESOLVE; **DEFLECT** = DOCS_REDIRECT + REROUTE; **HUMAN** = APPROVAL_GATED (людина вирішує, бот виконує) + HUMAN_REVIEW і SECURITY_ESCALATION (HUMAN-ONLY: людина вирішує і виконує). NEED_INFO — шлюз перед зоною.
+
 | Severity | Маршрут | Хто діє | Коли | Приклад | Із 108 |
 |---|---|---|---|---|---|
 | 0 | **DOCS_REDIRECT** | ніхто: бот дає статтю | відповідь існує в KB **і** немає сигналів ризику | #7 ліміти Notion API, #93 MFA на Android | 16 |
 | 1 | **AUTO_RESOLVE** | бот | дія з allowlist **і** передумови підтверджені read-side | #91 VPN (birthright), #104\* повторний інвайт | 1 |
 | 1 | **REROUTE** | інша черга | не IAM (техніка, оплати, HR, ціни) | #51 монітор, #28 кредити | 10 |
-| 2 | **NEED_INFO** | автор звернення | бракує системи / суб'єкта / списку людей / скоупу | #5 «ключ до однієї AI-моделі», #17 «список дам» | 27 |
-| 3 | **APPROVAL_GATED** | апрувер → бот | видача доступу, ліміти, ключі | #69\* повернення Tableau після mover, #16 квота BigQuery | 18 |
-| 4 | **HUMAN_REVIEW** | IAM-інженер | ризик, конфлікт джерел, critical-tier, привілеї | #46 «все що у ліда», #75 обхід HRIS, #92 offboarding | 33 |
+| 2 | **NEED_INFO** | автор звернення | бракує системи / суб'єкта / списку людей / скоупу | #5 «ключ до однієї AI-моделі», #36 ключ «локалізаторам» без моделі | 21 |
+| 3 | **APPROVAL_GATED** | апрувер → бот | видача доступу, ліміти, ключі | #69\* повернення Tableau після mover, #16 квота BigQuery | 15 |
+| 4 | **HUMAN_REVIEW** | IAM-інженер | ризик, конфлікт джерел, critical-tier, привілеї | #46 «все що у ліда», #75 обхід HRIS, #92 offboarding, #17 ліміти «5 людям» (від імені інших) | 42 |
 | 5 | **SECURITY_ESCALATION** | security, P1 | секрет злитий, підозріла автентифікація, вразливість | #32, #18, #85, #42\* (Tor-входи в System Log) | 3 |
 
 Колонка «Із 108» — прогін від імені «типового співробітника» (`tests/golden_routes.json`). \* — маршрут для синтетичного автора з демо-вибірки (`demo/sample.yaml`). Від «типового співробітника» той самий текст дає інший маршрут: #104 → APPROVAL (у нього немає погодженого інвайту), #69 і #42 → NEED_INFO (у System Log немає подій). Це і є роль read-side: рішення залежить від фактів про конкретну людину, а не лише від тексту.
@@ -238,3 +268,84 @@ colima start && docker compose up -d --build          # n8n :5678 + triage-се�
 2. `pytest`;
 3. `run_demo.py --all`;
 4. переглянути diff маршрутів (`git diff demo/`, golden snapshot).
+
+---
+
+## 7. Модель даних
+
+Один розбір звернення — це **рішення з поясненням**. Сервіс повертає його з `POST /api/triage`, і воно ж іде в журнал.
+
+| Сутність | Де в коді | Ключові поля | Хто заповнює |
+|---|---|---|---|
+| **Request** | вхід `pipeline.run_one` | `text`, `thread`, `requester_slack` (= `event.user`), `received_at` | Slack → n8n |
+| **Classification / SubRequest** | `classify.py` | `type` (enum 21), `app_mentions` (дослівно), `subject` (self / other / multiple / unknown), `missing_info`, `signals` (enum 20), `confidence` | LLM (недовірено) → валідація |
+| **Signal** | `signals.py` | `name`, `origin` (text / llm / read / catalog / classifier / kb), `evidence` | regex, LLM, read-side, каталог |
+| **ReadContext / Fact** | `readside.py` | `requester_email`, `requester_active`, `manager`, `manager_available`, `preconditions{}`, `facts[]` (source, mechanism, statement), `dry_run_plan[]` | HRIS, Okta, 1Password, GWS, журнал апрувів |
+| **Decision** | `policy.py` | `route`, `next_route`, `action`, `action_done`, `approvers[]`, `reasons[]` (signal, origin, evidence, min_route, reason), `risk_score`, `priority`, `queue`, `kb[]`, `questions[]` | policy engine |
+| **ActionLog entry** | `act.py` | `kind` (action / approval_request / clarification / reroute / escalation), `would_call`, `preconditions`, `idempotency_key`, `dry_run: true` | act (mock) |
+
+Приклад (скорочено, #46 «дайте все, що було у ліда, лід у відпустці»):
+
+```json
+{
+  "route": "HUMAN_REVIEW",
+  "decisions": [{
+    "type": "access_request", "primary_app": "google_workspace", "subject": "self",
+    "signals": [
+      {"name": "mirror_access", "origin": "text", "evidence": "regex 'що у (ліда|нього|неї|колеги) було' → «що у ліда було»"},
+      {"name": "broad_scope", "origin": "text", "evidence": "regex 'все видати' → «все видати»"},
+      {"name": "urgency", "origin": "text", "evidence": "regex 'асап' → «асап»"},
+      {"name": "approver_unavailable", "origin": "read", "evidence": "менеджер requester'а у відпустці за HRIS, делегата немає"}
+    ],
+    "reasons": [
+      {"signal": "type:access_request", "min_route": "APPROVAL_GATED"},
+      {"signal": "mirror_access", "min_route": "HUMAN_REVIEW", "reason": "'Дай як у X' — копіювання прав = over-granting"},
+      {"signal": "broad_scope", "min_route": "HUMAN_REVIEW"},
+      {"signal": "approver_unavailable", "min_route": "HUMAN_REVIEW"}
+    ],
+    "approvers": ["manager:… (НЕДОСТУПНИЙ)", "budget-owner"], "priority": "P2", "action": null
+  }],
+  "draft": "Передав запит IAM-інженеру. Доступи видаємо під конкретну задачу, а не «як у колеги» — так менше зайвих прав. …",
+  "actions": [{"kind": "escalation", "queue": "iam-review", "priority": "P2", "dry_run": true}]
+}
+```
+
+**Контракти сервісу:**
+
+| Endpoint | Хто кличе | Авторизація | Що робить |
+|---|---|---|---|
+| `POST /api/triage` | n8n, стенд | мережа compose / localhost | розбір + рішення; класифікатор обирає сервіс (`CLASSIFIER_MODE`), а не клієнт |
+| `POST /api/kb/sync` | n8n (KB sync) | `X-KB-Sync-Token` | атомарна заміна KB; 409 на порожній / обрізаний / невалідний набір |
+| `GET /api/kb/gaps`, `POST /api/kb/gaps/ack` | n8n (KB sync) | `X-KB-Sync-Token` | беклог `kb_gap` (лише відредагований текст) |
+
+## 8. Точки розширення
+
+| Що додати | Де | Потрібен код? | Що перевірити |
+|---|---|---|---|
+| **Новий SaaS / entitlement** | запис у `config/app_catalog.yaml`: аліаси, `sso`, `provisioning`, `risk_tier`, `approval`, `owner`, `cost`, `kb`, `nuance` | **ні** | `pytest` (цілісність каталогу: унікальні аліаси, KB-посилання існують) |
+| Нова birthright-група для AUTO | каталог (`birthright`, `okta_group`) + allowlist бота в Okta | ні | тест: група бота ∈ low-risk birthright |
+| Нове правило / зміна межі | `config/policy.yaml → hard_rules` (сигнал → `min_route`) | ні, якщо сигнал уже є | golden snapshot: diff маршрутів має бути свідомим |
+| Новий сигнал (напр. `prod_access`) | regex у `signals.py` + рядок у `hard_rules` + (опц.) enum LLM | так, мінімально | тест «є продюсер для кожного правила» + тест на клас |
+| Нова стаття KB | Notion «IAM KB», `Status = Published` | ні | підтягнеться синком за 15 хв |
+| Новий тип звернення | `type_base_route` у `policy.yaml` + `TYPE_REASON` + промпт | так | тест «у кожного типу є маршрут і пояснення» |
+| Нове джерело read-side | функція в `readside.py` з тим самим `ReadContext` (`Fact` із source + mechanism) | так | моки + тест передумов |
+| Інша LLM | `CLASSIFIER_MODE` (`llm` / `ollama`) | ні | той самий валідатор і тести |
+
+## 9. Масштаб, надійність, що переглянути
+
+- **Латентність.** Haiku відповідає за ~секунди, локальна модель — за кілька секунд, а Slack чекає ack приблизно 3 с (TODO(verify)). Тому в проді: ack одразу, обробка асинхронно, дедуп за `event_id`. У прототипі n8n відповідає синхронно.
+- **Повтори й вартість.** Відповіді LLM кешуються за хешем (модель + версія промпта + текст). Повторний прогін і `replay` безкоштовні.
+- **Ідемпотентність.** Кожна дія має `idempotency_key`; повтор події не дублює дію.
+- **Моніторинг (до проду):**
+  - розподіл маршрутів (дрейф);
+  - частка `rules-fallback` і `low_confidence`;
+  - **override rate** (людина змінила маршрут бота);
+  - дії бота поза allowlist (має бути 0).
+- **Що переглянути з ростом:**
+  - keyword-матчинг KB → семантичний пошук, коли статей сотні;
+  - стан треду (NEED_INFO → перезапуск triage);
+  - дедуп звернень за змістом;
+  - зберігання журналу рішень у SIEM замість JSONL;
+  - окремий ingress-сервіс для redaction до n8n (`critique.md` §3.2).
+- **Заплановано (фаза 5, `zones.md` §6):** `on_behalf` (видача) і `financial_data` → HUMAN_REVIEW; нові сигнали `prod_access`, `sod_conflict`; GitHub, AWS, Figma, Amplitude у каталозі.
+

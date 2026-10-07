@@ -1,7 +1,7 @@
 # CLAUDE.md — iam-triage
 
 Контекст для Claude Code (і для колеги-інженера, який підхоплює проєкт).
-Повний текст завдання: @TASK.md · журнал прогресу: @docs/PROGRESS.md · ключові рішення: @docs/DECISIONS.md
+Повний текст завдання: @TASK.md · журнал прогресу: @docs/PROGRESS.md · ключові рішення: @docs/DECISIONS.md · зони: @docs/zones.md · ADR: docs/adr/
 
 ## Що це
 
@@ -14,7 +14,7 @@
 
 1. **LLM — парсер, не суддя.** LLM повертає структуру (тип, сирі згадки систем, сигнали, missing info). Маршрут обирає лише `src/triage/policy.py` за `config/policy.yaml`.
 2. **Правила тільки підвищують маршрут.** Жоден сигнал не може знизити severity. LLM може додати сигнал, але не прибрати regex-сигнал.
-3. **AUTO лише з allowlist** (`resend_invite`, `add_birthright_group`, `readonly_diagnostic`) і лише коли preconditions підтверджені **read-side**, а не текстом звернення чи LLM.
+3. **Межі зон — `docs/zones.md`; для критичних систем HUMAN-ONLY ширше, а не вужче** (on_behalf, фінанси, prod, SoD). **AUTO лише з allowlist** (`resend_invite`, `add_birthright_group`, `readonly_diagnostic`) і лише коли preconditions підтверджені **read-side**, а не текстом звернення чи LLM.
 4. **NEED_INFO — gate перед апрувом:** якщо бракує критичних даних, спершу питаємо, а не створюємо апрув «наосліп».
 5. **Fail-closed:** невалідний вихід LLM, низька впевненість, недоступність API → вгору по спектру.
 6. **Секрети редагуються до LLM і до логів** (`src/triage/redact.py`). Ніколи не логувати сирий текст до редакції.
@@ -55,6 +55,9 @@ python tools/export_kb_csv.py           # config/kb.yaml → notion/iam_kb.csv �
 | act (mock) | `src/triage/act.py` | JSONL-журнал: action / approval_request / clarification / reroute / escalation |
 | respond | `src/triage/respond.py` | чернетки з шаблонів + KB; нейтральні формулювання для користувача; внутрішня нотатка |
 | report | `src/triage/report.py` | `demo/output*.md`, `demo/full_run*.md` |
+| dedup | `src/triage/dedup.py` | ретрай Slack за `event_id`, повтор (автор + тип + система), патерни; стан — у сервісі |
+| KB sync | `src/triage/kb_sync.py` | Notion → KB (лише Published, домени Notion, атомарно), беклог `kb_gap` |
+| сервіс | `tools/stand.py` | HTTP API + веб-стенд; сервісний режим = `TRIAGE_API_TOKEN` (без override, класифікатор обирає сервіс) |
 
 Маршрути (severity ↑): `DOCS_REDIRECT 0` → `AUTO_RESOLVE 1` / `REROUTE 1` → `NEED_INFO 2` → `APPROVAL_GATED 3` → `HUMAN_REVIEW 4` → `SECURITY_ESCALATION 5`.
 

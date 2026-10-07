@@ -33,6 +33,10 @@
 
 - [x] `docs/real-integrations.md` (блок e): кейс Device Inventory Reconciler (мок-дані), граблі цього прототипу (n8n, Notion, Docker)
 
+- [x] Фази 1–5 промпта «довести до рівня»: `docs/process/current-state.md`, `docs/zones.md`, `docs/adr/0001–0003`, `docs/architecture.md` (§7–9), розширення HUMAN-ONLY (on_behalf, financial_data, prod_access, sod_conflict), пріоритети P1–P4 і дедуп (`src/triage/dedup.py`), `kb/` (5 статей), `runbooks/` (3), `templates/human-handoff.md`, `AI_USAGE.md`; 392 тести
+
+- [x] Фази 6–9: golden set 30 граничних кейсів (`tests/golden/`), RACI (`docs/process/raci.md`), рев'ю коду (автентифікація викликача, override лише в dev, паролі в прозі, allowlist доменів KB, межі пам'яті дедупу), README як рішення; 497 тестів
+
 ## Далі (за пріоритетом)
 
 | # | Задача | Оцінка | Примітки |
