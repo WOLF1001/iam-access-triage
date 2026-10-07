@@ -169,6 +169,7 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, kb_sync.sync(body.get("articles") or [], body.get("source", "notion")))
                 return self._json(200, {"acked": kb_sync.ack_gaps(body.get("gap_ids") or [])})
             except kb_sync.SyncRejected as e:
+                sys.stderr.write(f"stand: kb sync rejected: {e}\n")   # reason only, no article content
                 return self._json(409, {"error": str(e)})
         return self._json(404, {"error": "not found"})
 

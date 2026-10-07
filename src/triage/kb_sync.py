@@ -57,14 +57,17 @@ def sync(articles: list[dict], source: str = "notion") -> dict:
     if not path:
         raise SyncRejected("KB_RUNTIME_PATH не заданий — синк вимкнено")
     published: dict[str, dict] = {}
+    dups: dict[str, int] = {}
     for a in articles:
         c = _clean(a)
         if c is None:
             continue
         aid = str(a["article_id"]).strip()
         if aid in published:
-            raise SyncRejected(f"дубль article_id: {aid}")
+            dups[aid] = dups.get(aid, 1) + 1
         published[aid] = c
+    if dups:   # report all of them at once, so a human fixes Notion in one pass
+        raise SyncRejected("дубль article_id (Published): " + ", ".join(f"{k} ×{v}" for k, v in sorted(dups.items())))
     current = config.kb()["articles"]
     if not published:
         raise SyncRejected("0 Published-статей — відмовляюсь замінювати KB (збій Notion або прав інтеграції?)")
