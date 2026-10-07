@@ -28,10 +28,11 @@ def test_on_behalf_grant_is_human_even_from_subjects_manager():
     assert r.overall_route == "HUMAN_REVIEW" and no_change_action(r)
 
 
-def test_on_behalf_without_access_change_is_exempt():
-    """'how do I…' for a colleague changes nothing → stays in DEFLECT."""
+def test_on_behalf_has_no_type_exemption():
+    """Even a how-to for a colleague goes to a human: the type is chosen by the LLM, so a type-based exemption
+    would let the LLM drop a regex signal (ai-mistakes #22). Over-escalation is the accepted cost."""
     r = run_text("як моїй колезі підключитись до vpn? інструкція", requester="U01")
-    assert SEV[r.overall_route] < SEV["HUMAN_REVIEW"]
+    assert r.overall_route == "HUMAN_REVIEW"
 
 
 def test_financial_data_is_human():

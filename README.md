@@ -66,7 +66,7 @@ Slack → n8n → redact → LLM-парсер → валідація схеми 
   - через API можна було діяти від імені будь-якого співробітника;
   - n8n зберігав секрети до redaction.
 
-  Усе закрито. Журнал — [`ai-artifacts/ai-mistakes.md`](ai-artifacts/ai-mistakes.md) (21 запис).
+  Усе закрито. Журнал — [`ai-artifacts/ai-mistakes.md`](ai-artifacts/ai-mistakes.md) (22 записи).
 - **Живий стек:** n8n (Slack-подія → маршрут → дія) і Notion (база знань, синк, чернетки для `kb_gap`) працюють наживо, а не на моках.
 
 ## Запуск

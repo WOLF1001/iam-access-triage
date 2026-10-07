@@ -117,7 +117,7 @@ hard_rules:
     reason: "'Лід в курсі' у тексті ≠ апрув. Апрув фіксується лише дією апрувера в системі."
   - signal: on_behalf
     min_route: HUMAN_REVIEW
-    exempt_types: [how_to, policy_question, not_iam, billing_finance]   # без дії над доступом — нема чого видавати
+    # Без винятків за типом: тип обирає LLM, тож виняток дав би їй спосіб прибрати regex-сигнал (ai-mistakes #22).
     reason: "Доступ для іншої людини — HUMAN-ONLY, навіть якщо автор — її менеджер: суб'єкт не просив сам → вектор соц. інженерії; потрібна згода суб'єкта (zones.md §6)."
   - signal: prod_access
     min_route: HUMAN_REVIEW
