@@ -11,8 +11,12 @@ services:
     ports:
       - "127.0.0.1:8765:8765"
     environment:
-      - ANTHROPIC_API_KEY          # прокидається з оточення хоста, якщо заданий; у файлах не зберігається
-      - ANTHROPIC_MODEL
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}   # з .env або оточення хоста; у репо не зберігається
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-haiku-4-5}
+      - CLASSIFIER_MODE=${CLASSIFIER_MODE:-rules}   # rules | llm | ollama (сервіс, а не клієнт, обирає класифікатор)
+      - OLLAMA_URL=${OLLAMA_URL:-}                  # напр. http://192.168.x.x:11434 (ПК з GPU)
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen3:14b}
+      - OLLAMA_THINK=${OLLAMA_THINK:-}
       - KB_SYNC_TOKEN=${KB_SYNC_TOKEN:?задай KB_SYNC_TOKEN у .env}   # хто пише KB — пише відповіді бота
     volumes:
       - triage_kb:/app/runtime     # остання успішно синхронізована з Notion KB

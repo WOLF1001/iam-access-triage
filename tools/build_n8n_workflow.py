@@ -59,14 +59,13 @@ return [{ json: {
   thread: b.thread_context ?? null,        // у проді: conversations.replies(thread_ts)
   channel: e.channel ?? 'C-IAM-HELP',
   thread_ts: e.thread_ts ?? e.ts ?? null,
-  mode: 'rules',                           // клієнт не обирає класифікатор; LLM вмикається на сервісі
 }}];
 """)
 
 triage = node("Triage service (policy)", "n8n-nodes-base.httpRequest", 4.2, [560, 300], {
     "method": "POST", "url": "http://triage:8765/api/triage",
     "sendBody": True, "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread, mode: $json.mode }) }}",
+    "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
     "options": {"timeout": 15000}}, onError="continueErrorOutput")
 
 ROUTES = [("DOCS_REDIRECT", "DOCS"), ("AUTO_RESOLVE", "AUTO"), ("REROUTE", "REROUTE"), ("NEED_INFO", "NEED_INFO"),

@@ -20,7 +20,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\n// Формат Slack Events API: { event_id, event: { user, text, channel, ts, thread_ts } }.\n// requester береться ЛИШЕ з event.user (підписано Slack), ніколи з тексту.\nconst b = $input.first().json.body ?? {};\nconst e = b.event ?? {};\nif (!e.text || !e.user) {\n  return [{ json: { valid: false, error: 'Очікується Slack event: { event: { user, text, channel, ts } }' } }];\n}\nreturn [{ json: {\n  valid: true,\n  event_id: b.event_id ?? null,\n  id: Number(b.request_id ?? 0),          // № з датасету — лише для демо\n  text: e.text,\n  requester: e.user,\n  thread: b.thread_context ?? null,        // у проді: conversations.replies(thread_ts)\n  channel: e.channel ?? 'C-IAM-HELP',\n  thread_ts: e.thread_ts ?? e.ts ?? null,\n  mode: 'rules',                           // клієнт не обирає класифікатор; LLM вмикається на сервісі\n}}];\n"
+        "jsCode": "\n// Формат Slack Events API: { event_id, event: { user, text, channel, ts, thread_ts } }.\n// requester береться ЛИШЕ з event.user (підписано Slack), ніколи з тексту.\nconst b = $input.first().json.body ?? {};\nconst e = b.event ?? {};\nif (!e.text || !e.user) {\n  return [{ json: { valid: false, error: 'Очікується Slack event: { event: { user, text, channel, ts } }' } }];\n}\nreturn [{ json: {\n  valid: true,\n  event_id: b.event_id ?? null,\n  id: Number(b.request_id ?? 0),          // № з датасету — лише для демо\n  text: e.text,\n  requester: e.user,\n  thread: b.thread_context ?? null,        // у проді: conversations.replies(thread_ts)\n  channel: e.channel ?? 'C-IAM-HELP',\n  thread_ts: e.thread_ts ?? e.ts ?? null,\n}}];\n"
       },
       "name": "Normalize Slack event",
       "type": "n8n-nodes-base.code",
@@ -37,7 +37,7 @@
         "url": "http://triage:8765/api/triage",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread, mode: $json.mode }) }}",
+        "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
         "options": {
           "timeout": 15000
         }

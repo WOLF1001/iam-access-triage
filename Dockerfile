@@ -13,7 +13,7 @@ COPY demo/sample.yaml ./demo/sample.yaml
 COPY tests/golden_routes.json ./tests/golden_routes.json
 COPY tools/stand.py tools/stand.html ./tools/
 
-ENV STAND_HOST=0.0.0.0 STAND_PORT=8765 PYTHONUNBUFFERED=1 KB_RUNTIME_PATH=/app/runtime/kb.json
+ENV STAND_HOST=0.0.0.0 STAND_PORT=8765 PYTHONUNBUFFERED=1 KB_RUNTIME_PATH=/app/runtime/kb.json LLM_CACHE_DIR=/app/runtime/cache
 # код і конфіг — лише читання для сервісу (права з хоста можуть бути 600); писати можна тільки в /app/runtime
 RUN chmod -R a+rX,go-w /app && useradd --uid 10001 --no-create-home triage && mkdir -p /app/runtime && chown triage /app/runtime
 USER triage

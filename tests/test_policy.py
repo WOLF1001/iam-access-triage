@@ -148,3 +148,46 @@ def test_llm_tool_use_parsing(monkeypatch, tmp_path):
     assert c.sub_requests[1].confidence == 0.0
     c2 = classify.classify_llm("дайте табло", None, replay_only=True)   # тепер з кешу
     assert c2.classifier.startswith("llm-cache")
+
+
+def test_ollama_backend_parsing_and_fail_closed(monkeypatch, tmp_path):
+    """Локальна модель через фейковий Ollama-сервер: та сама валідація, кеш, і fail-closed на сміття."""
+    import http.server
+    import threading
+
+    replies = iter([
+        {"is_iam": True, "sub_requests": [{"summary": "x", "type": "access_request", "app_mentions": ["табло"],
+                                           "subject": "self", "missing_info": [], "signals": ["urgency", "BOGUS"],
+                                           "confidence": 0.9}]},
+        "це не JSON",
+    ])
+
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_POST(self):
+            body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            assert body["format"]["required"] == ["is_iam", "sub_requests"] and body["stream"] is False
+            r = next(replies)
+            content = r if isinstance(r, str) else json.dumps(r, ensure_ascii=False)
+            out = json.dumps({"message": {"role": "assistant", "content": content},
+                              "prompt_eval_count": 1, "eval_count": 1, "total_duration": 1}).encode()
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(out)))
+            self.end_headers()
+            self.wfile.write(out)
+
+        def log_message(self, *a):
+            pass
+
+    srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    monkeypatch.setenv("OLLAMA_URL", f"http://127.0.0.1:{srv.server_port}")
+    monkeypatch.setenv("OLLAMA_MODEL", "fake-local")
+    monkeypatch.setattr(config, "CACHE", tmp_path)
+    try:
+        c = classify.classify("дайте табло", None, "ollama")
+        assert c.classifier == "ollama:fake-local" and c.sub_requests[0].signals == ["urgency"]
+        assert classify.classify("дайте табло", None, "replay").classifier == "ollama-cache:fake-local"
+        bad = classify.classify("інше звернення", None, "ollama")       # сміття замість JSON
+        assert bad.classifier.startswith("rules-fallback") and all(s.confidence <= 0.5 for s in bad.sub_requests)
+    finally:
+        srv.shutdown()

@@ -14,7 +14,7 @@ CONFIG = ROOT / "config"
 MOCKS = ROOT / "mocks"
 DATA = ROOT / "data"
 PROMPTS = ROOT / "prompts"
-CACHE = ROOT / "cache"
+CACHE = Path(os.environ.get("LLM_CACHE_DIR") or ROOT / "cache")   # у контейнері — /app/runtime/cache
 DEMO = ROOT / "demo"
 
 

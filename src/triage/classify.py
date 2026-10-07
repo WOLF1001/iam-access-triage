@@ -157,8 +157,13 @@ def _load_cache() -> dict:
 
 
 def _save_cache(cache: dict) -> None:
-    config.CACHE.mkdir(exist_ok=True)
-    _cache_path().write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    """Помилка запису кешу не має перетворювати вже оплачену відповідь LLM на rules-fallback."""
+    try:
+        config.CACHE.mkdir(parents=True, exist_ok=True)
+        _cache_path().write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    except OSError as e:
+        import sys
+        print(f"WARN: кеш LLM не записано ({e}); результат використано без кешу", file=sys.stderr)
 
 
 def _cache_key(model: str, prompt_version: str, text: str, thread: str | None) -> str:
@@ -226,12 +231,65 @@ def classify_llm(text: str, thread: str | None = None, *, replay_only: bool = Fa
     return c
 
 
+# ---------------------------------------------------------------------------
+# Локальна модель (Ollama) — та сама схема, та сама валідація, той самий кеш.
+# Використання: OLLAMA_URL=http://<gpu-host>:11434 OLLAMA_MODEL=qwen3:14b --classifier ollama
+# Структурований вихід через `format` (JSON Schema) у /api/chat; tool use не потрібен.
+# ---------------------------------------------------------------------------
+OLLAMA_SUFFIX = ("\n\n## Формат відповіді\nІнструментів немає. Поверни ОДИН JSON-об'єкт за схемою `record_triage` "
+                 "(поля is_iam і sub_requests) і нічого більше.")
+
+
+def _ollama_key(text: str, thread: str | None, prompt_file: str) -> tuple[str, str]:
+    model = os.environ.get("OLLAMA_MODEL", "qwen3:14b")
+    return model, _cache_key(f"ollama:{model}", prompt_file, text, thread)
+
+
+def classify_ollama(text: str, thread: str | None = None, *, prompt_file: str = "classify_v2.md") -> Classification:
+    import urllib.request
+
+    model, key = _ollama_key(text, thread, prompt_file)
+    cache = _load_cache()
+    if key in cache:
+        c = _validate(cache[key]["output"])
+        c.classifier = f"ollama-cache:{model}"
+        return c
+    url = os.environ.get("OLLAMA_URL", "http://localhost:11434").rstrip("/")
+    system = (config.PROMPTS / prompt_file).read_text(encoding="utf-8") + OLLAMA_SUFFIX
+    user_block = f"<request>\n{text}\n</request>" + (f"\n<thread>\n{thread}\n</thread>" if thread else "")
+    body = {"model": model, "stream": False, "format": TOOL_SCHEMA["input_schema"],
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user_block}],
+            "options": {"temperature": 0, "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", "8192"))}}
+    if os.environ.get("OLLAMA_THINK") in ("0", "false"):
+        body["think"] = False          # для «думаючих» моделей (qwen3) — швидше; TODO(verify) для кожної моделі
+    req = urllib.request.Request(f"{url}/api/chat", json.dumps(body).encode(), {"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=float(os.environ.get("OLLAMA_TIMEOUT", "180"))) as r:
+        resp = json.load(r)
+    raw = json.loads(resp["message"]["content"])    # невалідний JSON → виняток → fail-closed у classify()
+    cache[key] = {"model": f"ollama:{model}", "prompt": prompt_file, "input": user_block, "output": raw,
+                  "usage": {"in": resp.get("prompt_eval_count"), "out": resp.get("eval_count"),
+                            "seconds": round(resp.get("total_duration", 0) / 1e9, 2)}}
+    _save_cache(cache)
+    c = _validate(raw)
+    c.classifier = f"ollama:{model}"
+    return c
+
+
 def classify(text: str, thread: str | None, mode: str) -> Classification:
     if mode == "rules":
         return classify_rules(text, thread)
-    if mode in ("llm", "replay"):
+    if mode == "replay":
+        # офлайн-відтворення: спершу кеш Claude, потім кеш локальної моделі
         try:
-            return classify_llm(text, thread, replay_only=(mode == "replay"))
+            return classify_llm(text, thread, replay_only=True)
+        except LookupError:
+            model, key = _ollama_key(text, thread, "classify_v2.md")
+            if key in _load_cache():
+                return classify_ollama(text, thread)
+            raise
+    if mode in ("llm", "ollama"):
+        try:
+            return classify_llm(text, thread) if mode == "llm" else classify_ollama(text, thread)
         except LookupError:
             raise
         except Exception as e:  # мережа/ключ/квота → не падаємо, а деградуємо на rules + low confidence

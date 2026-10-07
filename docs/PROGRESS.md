@@ -25,11 +25,13 @@
 - [x] Notion «IAM KB»: CSV для імпорту (`notion/`), `/api/kb/sync` (токен, лише Published, атомарно, відмова на порожній/обрізаний синк), беклог `kb_gap`; n8n-воркфлоу «KB sync» (`n8n/kb-sync.workflow.json`); +17 тестів (`tests/test_kb_sync.py`, вкл. «отруєння» KB)
 - [x] Notion підключено наживо: 21 стаття синхронізована в сервіс (джерело `notion`, посилання на реальні сторінки), kb_gap → Draft у Notion → ack; «KB sync» опубліковано (кожні 15 хв)
 
+- [x] GAP-1..5 закрито (ADR-010 / D10): заземлення виходу LLM, прив'язка апруву, Unicode-нормалізація, монотонність kb_gap; 347 passed, golden без змін
+- [x] Класифікатор `ollama` (локальна LLM на власному GPU) — та сама схема/валідація/кеш/fail-closed
+
 ## Далі (за пріоритетом)
 
 | # | Задача | Оцінка | Примітки |
 |---|---|---|---|
-| 0 | **Фікс GAP-1/2 (ADR-010), GAP-3, GAP-4, GAP-5** — прибрати xfail у `tests/test_adversarial_llm.py`, `test_invariants.py` | 1 год | GAP-1 critical: multi-sub → AUTO |
 | 1 | Прогін з реальною LLM: `--classifier llm`, закомітити `cache/llm_cache.json`, `demo/output_llm.md` | 20 хв | потрібен `ANTHROPIC_API_KEY` |
 | 2 | `tools/compare_naive.py` → `ai-artifacts/naive_vs_policy.md`; кращі розбіжності — в `ai-mistakes.md` | 20 хв | головний доказ для блоку d |
 | 3 | `docs/architecture.md`: схема (mermaid), read-side vs act-side таблиця по системах, обґрунтування стеку (Python core vs n8n), як лягає на n8n + Slack | 1 год | |

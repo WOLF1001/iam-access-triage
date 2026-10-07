@@ -111,6 +111,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
         <label><input type="radio" name="mode" value="rules" checked> rules-класифікатор (без ключа)</label>
         <label><input type="radio" name="mode" value="override"> LLM-override (ручний JSON — відтворити атаку)</label>
         <label id="llmLbl"><input type="radio" name="mode" value="llm"> Claude API</label>
+        <label id="ollamaLbl"><input type="radio" name="mode" value="ollama"> Локальна LLM (Ollama)</label>
       </div>
       <div id="overrideBox" hidden style="margin-top:10px">
         <div class="presets">
@@ -151,6 +152,8 @@ async function boot(){
     `<option value="${u.id}">${esc(u.name)}${u.dept? " · "+esc(u.dept):""}${u.external? " · Slack Connect (зовнішній)":""}</option>`).join("");
   $("#requester").value = "UGEN";
   $("#routeFilter").innerHTML += BOOT.routes.map(r => `<option value="${r.id}">${SHORT[r.id]}</option>`).join("");
+  if (!BOOT.ollama){ const l=$("#ollamaLbl"); l.style.opacity=.45; l.title="немає OLLAMA_URL"; l.querySelector("input").disabled=true; }
+  else $("#ollamaLbl").lastChild.textContent = ` Локальна LLM (${BOOT.ollama})`;
   if (!BOOT.llm_available){ const l=$("#llmLbl"); l.style.opacity=.45; l.title="немає ANTHROPIC_API_KEY"; l.querySelector("input").disabled=true; }
   renderList();
   const first = BOOT.requests.find(r => r.id === 104);

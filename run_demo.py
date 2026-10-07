@@ -3,6 +3,7 @@
 
   python run_demo.py                        # вибірка з demo/sample.yaml, класифікатор rules (без ключа)
   python run_demo.py --classifier llm       # Claude API (потрібен ANTHROPIC_API_KEY), відповіді кешуються
+  python run_demo.py --classifier ollama    # локальна модель (OLLAMA_URL, OLLAMA_MODEL), безкоштовно
   python run_demo.py --classifier replay    # тільки з кешу, без мережі — відтворюваний прогін
   python run_demo.py --all                  # + розподіл маршрутів по всіх зверненнях датасету
   python run_demo.py --ids 32 46            # конкретні звернення
@@ -12,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -20,9 +22,22 @@ from triage import config, pipeline, report  # noqa: E402
 from triage.act import ActionLog  # noqa: E402
 
 
+def _check_classifier(results, mode: str) -> None:
+    """Fail-closed у classify() тихо підміняє LLM на rules (усе → HUMAN). У звіті це має бути видно."""
+    if mode == "rules":
+        return
+    used = Counter(r.classification.classifier.split(" (")[0] for r in results)
+    fallbacks = Counter(r.classification.classifier for r in results if r.classification.classifier.startswith("rules-fallback"))
+    print(f"   класифікатор: {dict(used)}")
+    if fallbacks:
+        print(f"\n!! {sum(fallbacks.values())}/{len(results)} звернень пішли в rules-fallback: {dict(fallbacks)}")
+        print("!! Це НЕ прогін LLM. Перевір ANTHROPIC_API_KEY / ліміти й перезапусти.")
+        sys.exit(2)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--classifier", choices=["rules", "llm", "replay"], default="rules")
+    ap.add_argument("--classifier", choices=["rules", "llm", "ollama", "replay"], default="rules")
     ap.add_argument("--all", action="store_true", help="також прогнати всі звернення датасету")
     ap.add_argument("--ids", type=int, nargs="*")
     args = ap.parse_args()
@@ -53,6 +68,7 @@ def main() -> None:
                               "decisions": [d.to_dict() for d in r.decisions],
                               "draft": r.draft}, ensure_ascii=False) for r in results), encoding="utf-8")
     print(f"\n→ {out.relative_to(config.ROOT)}  ·  {log.path.relative_to(config.ROOT)}")
+    _check_classifier(results, args.classifier)
 
     if args.all:
         full = [pipeline.run_one(i, t, requester_slack="UGEN", thread=None, mode=args.classifier, log=None)
@@ -60,6 +76,7 @@ def main() -> None:
         p = config.DEMO / f"full_run{suffix}.md"
         p.write_text(report.render_distribution(full, args.classifier), encoding="utf-8")
         print(f"→ {p.relative_to(config.ROOT)}")
+        _check_classifier(full, args.classifier)
 
 
 if __name__ == "__main__":

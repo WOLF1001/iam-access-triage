@@ -53,6 +53,8 @@ def _bootstrap() -> dict:
     routes = [{"id": k, "severity": v["severity"], "desc": v["desc"]} for k, v in config.policy()["routes"].items()]
     return {"requests": reqs, "users": _users(), "routes": routes,
             "llm_available": bool(os.environ.get("ANTHROPIC_API_KEY")),
+            "ollama": os.environ.get("OLLAMA_URL") and os.environ.get("OLLAMA_MODEL", "qwen3:14b"),
+            "default_mode": os.environ.get("CLASSIFIER_MODE", "rules"),
             "types": classify.TYPES, "llm_signals": classify.LLM_SIGNALS,
             "kb": {"source": config.kb().get("source"), "articles": len(config.kb()["articles"])}}
 
@@ -68,7 +70,10 @@ def triage(body: dict) -> dict:
     text = (body.get("text") or "").strip()
     if not text:
         raise ValueError("порожній текст")
-    mode = body.get("mode", "rules")
+    # n8n/Slack не обирають класифікатор — це вирішує сервіс (CLASSIFIER_MODE); стенд може перевизначити
+    mode = body.get("mode") or os.environ.get("CLASSIFIER_MODE", "rules")
+    if mode not in ("rules", "llm", "ollama", "replay", "override"):
+        raise ValueError(f"невідомий mode: {mode}")
     orig = classify.classify
     try:
         if mode == "override":
