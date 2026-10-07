@@ -1,0 +1,1250 @@
+{
+ "1": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    null
+   ]
+  ]
+ },
+ "2": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    "market_intel_remote_env"
+   ]
+  ]
+ },
+ "3": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "airtable"
+   ]
+  ]
+ },
+ "4": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "policy_question",
+    "DOCS_REDIRECT",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "5": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "6": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "app_store_connect"
+   ]
+  ]
+ },
+ "7": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "policy_question",
+    "DOCS_REDIRECT",
+    null,
+    "notion"
+   ]
+  ]
+ },
+ "8": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ],
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "9": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "app_store_connect"
+   ]
+  ]
+ },
+ "10": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "transcription_tool"
+   ]
+  ]
+ },
+ "11": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "meta_business_manager"
+   ]
+  ]
+ },
+ "12": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "security_policy_change",
+    "HUMAN_REVIEW",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "13": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "license_request",
+    "APPROVAL_GATED",
+    null,
+    "transcription_tool"
+   ]
+  ]
+ },
+ "14": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "15": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "16": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "limits_quota",
+    "APPROVAL_GATED",
+    null,
+    "bigquery"
+   ]
+  ]
+ },
+ "17": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "limits_quota",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "claude_org"
+   ]
+  ]
+ },
+ "18": {
+  "route": "SECURITY_ESCALATION",
+  "subs": [
+   [
+    "secret_incident",
+    "SECURITY_ESCALATION",
+    null,
+    null
+   ]
+  ]
+ },
+ "19": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "meta_business_manager"
+   ]
+  ]
+ },
+ "20": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "integration_connector",
+    "HUMAN_REVIEW",
+    null,
+    "asana"
+   ]
+  ]
+ },
+ "21": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "market_intel_remote_env"
+   ]
+  ]
+ },
+ "22": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    null
+   ]
+  ]
+ },
+ "23": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "google_workspace"
+   ]
+  ]
+ },
+ "24": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "meta_business_manager"
+   ]
+  ]
+ },
+ "25": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ],
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    null
+   ]
+  ]
+ },
+ "26": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "data_export",
+    "HUMAN_REVIEW",
+    null,
+    "meta_business_manager"
+   ]
+  ]
+ },
+ "27": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "tiktok_business_center"
+   ]
+  ]
+ },
+ "28": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    "ai_dubbing_tool"
+   ]
+  ]
+ },
+ "29": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "license_issue",
+    "HUMAN_REVIEW",
+    null,
+    "adobe_cc"
+   ],
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "adobe_cc"
+   ]
+  ]
+ },
+ "30": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "growthbook"
+   ]
+  ]
+ },
+ "31": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "limits_quota",
+    "APPROVAL_GATED",
+    null,
+    "gemini_workspace"
+   ]
+  ]
+ },
+ "32": {
+  "route": "SECURITY_ESCALATION",
+  "subs": [
+   [
+    "secret_incident",
+    "SECURITY_ESCALATION",
+    null,
+    "onepassword"
+   ]
+  ]
+ },
+ "33": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "airtable"
+   ]
+  ]
+ },
+ "34": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "api_key_request",
+    "APPROVAL_GATED",
+    null,
+    "app_store_connect"
+   ]
+  ]
+ },
+ "35": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "limits_quota",
+    "APPROVAL_GATED",
+    null,
+    "bigquery"
+   ]
+  ]
+ },
+ "36": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "37": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "airtable"
+   ]
+  ]
+ },
+ "38": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "app_store_connect"
+   ]
+  ]
+ },
+ "39": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "speechify"
+   ]
+  ]
+ },
+ "40": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "integration_connector",
+    "HUMAN_REVIEW",
+    null,
+    "make"
+   ]
+  ]
+ },
+ "41": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "offboarding",
+    "HUMAN_REVIEW",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "42": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    null
+   ]
+  ]
+ },
+ "43": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "project_work",
+    "HUMAN_REVIEW",
+    null,
+    "google_workspace"
+   ]
+  ]
+ },
+ "44": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    "slack"
+   ]
+  ]
+ },
+ "45": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "46": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "google_workspace"
+   ]
+  ]
+ },
+ "47": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    null
+   ]
+  ]
+ },
+ "48": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "license_issue",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "49": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "project_work",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ],
+   [
+    "license_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ],
+   [
+    "project_work",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "50": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "market_intel_remote_env"
+   ]
+  ]
+ },
+ "51": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "52": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ],
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "53": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "login_diagnostic",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "54": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "api_key_request",
+    "APPROVAL_GATED",
+    null,
+    "gemini_api"
+   ]
+  ]
+ },
+ "55": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "openai"
+   ]
+  ]
+ },
+ "56": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "login_diagnostic",
+    "HUMAN_REVIEW",
+    null,
+    "sensor_tower"
+   ]
+  ]
+ },
+ "57": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "meta_business_manager"
+   ]
+  ]
+ },
+ "58": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "onboarding",
+    "HUMAN_REVIEW",
+    null,
+    "onepassword"
+   ]
+  ]
+ },
+ "59": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "integration_connector",
+    "HUMAN_REVIEW",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "60": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "usage_report",
+    "HUMAN_REVIEW",
+    null,
+    "slack"
+   ]
+  ]
+ },
+ "61": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "integration_connector",
+    "HUMAN_REVIEW",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "62": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "ai_dubbing_tool"
+   ]
+  ]
+ },
+ "63": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "license_request",
+    "HUMAN_REVIEW",
+    null,
+    "market_intel_remote_env"
+   ]
+  ]
+ },
+ "64": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "login_diagnostic",
+    "HUMAN_REVIEW",
+    null,
+    "legal_docs_tool"
+   ]
+  ]
+ },
+ "65": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "onepassword"
+   ]
+  ]
+ },
+ "66": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "unclear",
+    "HUMAN_REVIEW",
+    null,
+    "app_store_connect"
+   ]
+  ]
+ },
+ "67": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "68": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "asana"
+   ]
+  ]
+ },
+ "69": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "tableau"
+   ]
+  ]
+ },
+ "70": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "71": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "tableau"
+   ],
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    "tableau"
+   ]
+  ]
+ },
+ "72": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    "coda"
+   ]
+  ]
+ },
+ "73": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "74": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "75": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "onboarding",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "76": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "n8n"
+   ]
+  ]
+ },
+ "77": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ],
+   [
+    "billing_finance",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "78": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "credential_reset",
+    "DOCS_REDIRECT",
+    null,
+    "google_workspace"
+   ]
+  ]
+ },
+ "79": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "80": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "limits_quota",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "81": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "82": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    null,
+    "tableau"
+   ]
+  ]
+ },
+ "83": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "api_key_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "gemini_workspace"
+   ]
+  ]
+ },
+ "84": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "login_diagnostic",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "tableau"
+   ]
+  ]
+ },
+ "85": {
+  "route": "SECURITY_ESCALATION",
+  "subs": [
+   [
+    "not_iam",
+    "SECURITY_ESCALATION",
+    null,
+    null
+   ]
+  ]
+ },
+ "86": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "limits_quota",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    "claude_org"
+   ]
+  ]
+ },
+ "87": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "payment_platform"
+   ]
+  ]
+ },
+ "88": {
+  "route": "REROUTE",
+  "subs": [
+   [
+    "not_iam",
+    "REROUTE",
+    null,
+    null
+   ]
+  ]
+ },
+ "89": {
+  "route": "NEED_INFO",
+  "subs": [
+   [
+    "access_request",
+    "NEED_INFO",
+    "APPROVAL_GATED",
+    null
+   ]
+  ]
+ },
+ "90": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "limits_quota",
+    "HUMAN_REVIEW",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "91": {
+  "route": "AUTO_RESOLVE",
+  "subs": [
+   [
+    "access_request",
+    "AUTO_RESOLVE",
+    null,
+    "vpn"
+   ],
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "vpn"
+   ]
+  ]
+ },
+ "92": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "offboarding",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "93": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "credential_reset",
+    "DOCS_REDIRECT",
+    null,
+    null
+   ]
+  ]
+ },
+ "94": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "95": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "credential_reset",
+    "DOCS_REDIRECT",
+    null,
+    null
+   ]
+  ]
+ },
+ "96": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "onepassword"
+   ]
+  ]
+ },
+ "97": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "license_request",
+    "APPROVAL_GATED",
+    null,
+    "claude_org"
+   ],
+   [
+    "limits_quota",
+    "APPROVAL_GATED",
+    null,
+    "claude_org"
+   ]
+  ]
+ },
+ "98": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "usage_report",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "99": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "policy_question",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "100": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "usage_report",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "101": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "access_request",
+    "APPROVAL_GATED",
+    null,
+    "market_intel_remote_env"
+   ]
+  ]
+ },
+ "102": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    null
+   ]
+  ]
+ },
+ "103": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "access_request",
+    "HUMAN_REVIEW",
+    null,
+    "internal_support_tool"
+   ]
+  ]
+ },
+ "104": {
+  "route": "APPROVAL_GATED",
+  "subs": [
+   [
+    "invite_resend",
+    "APPROVAL_GATED",
+    null,
+    "asana"
+   ]
+  ]
+ },
+ "105": {
+  "route": "HUMAN_REVIEW",
+  "subs": [
+   [
+    "how_to",
+    "HUMAN_REVIEW",
+    null,
+    "coda"
+   ]
+  ]
+ },
+ "106": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    null
+   ]
+  ]
+ },
+ "107": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "slack"
+   ]
+  ]
+ },
+ "108": {
+  "route": "DOCS_REDIRECT",
+  "subs": [
+   [
+    "how_to",
+    "DOCS_REDIRECT",
+    null,
+    "asana"
+   ]
+  ]
+ }
+}

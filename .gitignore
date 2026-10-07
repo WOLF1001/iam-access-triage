@@ -6,3 +6,6 @@ __pycache__/
 # Claude Code — приватне
 CLAUDE.local.md
 .claude/settings.local.json
+.hypothesis/
+.venv/
+.DS_Store
