@@ -16,6 +16,7 @@ import re
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 from . import config
 
@@ -39,8 +40,10 @@ def _clean(a: dict) -> dict | None:
         raise SyncRejected(f"невалідний article_id: {aid!r}")
     if not title or not summary:
         raise SyncRejected(f"{aid}: порожні title/summary")
-    if not url.startswith("https://"):
-        raise SyncRejected(f"{aid}: url має бути https (посилання на сторінку Notion)")
+    host = urlparse(url).hostname or ""
+    allowed = os.environ.get("KB_URL_ALLOWED_HOSTS", "notion.so,www.notion.so,app.notion.com,notion.site").split(",")
+    if urlparse(url).scheme != "https" or not any(host == h or host.endswith("." + h) for h in allowed):
+        raise SyncRejected(f"{aid}: url має бути https на домені Notion ({host or url!r}) — бот не пересилає довільні посилання")
     kws = a.get("keywords") or []
     if isinstance(kws, str):
         kws = [k for k in (x.strip() for x in kws.split(",")) if k]

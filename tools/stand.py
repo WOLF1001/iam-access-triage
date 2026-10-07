@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import hmac  # noqa: E402
 
 from triage import classify, config, kb_sync, pipeline  # noqa: E402
+from triage.dedup import DedupStore  # noqa: E402
 from triage.act import ActionLog  # noqa: E402
 from triage.classify import Classification, SubRequest  # noqa: E402
 
@@ -31,6 +32,11 @@ HOST = os.environ.get("STAND_HOST", "127.0.0.1")   # у контейнері —
 HTML = Path(__file__).with_name("stand.html")
 # Хто може писати в KB, той пише відповіді бота → синк лише з токеном (n8n отримує його з env).
 KB_SYNC_TOKEN = os.environ.get("KB_SYNC_TOKEN", "")
+DEDUP = DedupStore()
+# Service mode (container / prod): the caller (n8n) must authenticate, because `requester` comes from the caller —
+# without a token anyone who can reach the port could act as any Slack user. Dev mode (no token): local UI only.
+TRIAGE_API_TOKEN = os.environ.get("TRIAGE_API_TOKEN", "")
+DEV_MODE = not TRIAGE_API_TOKEN
 
 
 def _users() -> list[dict]:
@@ -55,6 +61,7 @@ def _bootstrap() -> dict:
             "llm_available": bool(os.environ.get("ANTHROPIC_API_KEY")),
             "ollama": os.environ.get("OLLAMA_URL") and os.environ.get("OLLAMA_MODEL", "qwen3:14b"),
             "default_mode": os.environ.get("CLASSIFIER_MODE", "rules"),
+            "dev_mode": DEV_MODE,
             "types": classify.TYPES, "llm_signals": classify.LLM_SIGNALS,
             "kb": {"source": config.kb().get("source"), "articles": len(config.kb()["articles"])}}
 
@@ -70,8 +77,12 @@ def triage(body: dict) -> dict:
     text = (body.get("text") or "").strip()
     if not text:
         raise ValueError("порожній текст")
-    # n8n/Slack не обирають класифікатор — це вирішує сервіс (CLASSIFIER_MODE); стенд може перевизначити
-    mode = body.get("mode") or os.environ.get("CLASSIFIER_MODE", "rules")
+    event_id = body.get("event_id")
+    cached = DEDUP.cached(event_id)
+    if cached:   # Slack retry of the same event: same answer, no second run, no new actions
+        return {**cached, "dedup": {**cached.get("dedup", {}), "replayed_event": True}}
+    # n8n/Slack do not choose the classifier — the service does (CLASSIFIER_MODE). Only the local dev UI may override.
+    mode = (body.get("mode") if DEV_MODE else None) or os.environ.get("CLASSIFIER_MODE", "rules")
     if mode not in ("rules", "llm", "ollama", "replay", "override"):
         raise ValueError(f"невідомий mode: {mode}")
     orig = classify.classify
@@ -90,7 +101,7 @@ def triage(body: dict) -> dict:
         classify.classify = orig
     if any(x["signal"] == "kb_gap" for d in r.decisions for x in d.reasons):
         kb_sync.record_gap(r.redacted_text, r.req_id or None)
-    return {
+    result = {
         "route": r.overall_route,
         "redacted_text": r.redacted_text, "thread_redacted": r.thread_redacted,
         "redaction_findings": r.redaction_findings, "requester": r.requester,
@@ -102,6 +113,8 @@ def triage(body: dict) -> dict:
                        "preconditions": d.read.preconditions if d.read else {}} for d in r.decisions],
         "draft": r.draft, "internal_note": r.internal_note, "actions": actions,
     }
+    result["dedup"] = {**DEDUP.record(event_id, r.requester, result), "replayed_event": False}
+    return result
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -127,6 +140,11 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._json(404, {"error": "not found"})
 
+    def _triage_authorized(self) -> bool:
+        if DEV_MODE:
+            return True
+        return hmac.compare_digest(self.headers.get("X-Triage-Token", ""), TRIAGE_API_TOKEN)
+
     def _authorized(self) -> bool:
         got = self.headers.get("X-KB-Sync-Token", "")
         return bool(KB_SYNC_TOKEN) and hmac.compare_digest(got, KB_SYNC_TOKEN)
@@ -137,6 +155,8 @@ class Handler(BaseHTTPRequestHandler):
         except json.JSONDecodeError as e:
             return self._json(400, {"error": f"invalid JSON: {e}"})
         if self.path == "/api/triage":
+            if not self._triage_authorized():
+                return self._json(401, {"error": "X-Triage-Token невірний або відсутній"})
             try:
                 return self._json(200, triage(body))
             except Exception as e:  # стенд — показуємо помилку в UI, не падаємо

@@ -96,4 +96,5 @@ def run_one(req_id: int, text: str, *, requester_slack: str | None, thread: str 
     return Result(req_id=req_id, text=text, redacted_text=red_text, thread_redacted=red_thread,
                   redaction_findings=findings, requester=requester_email, classification=cls,
                   decisions=decisions, overall_route=overall, draft=respond.compose(decisions),
-                  internal_note=respond.internal_note(decisions), actions=actions)
+                  internal_note=respond.internal_note(decisions, requester=requester_email, text=red_text,
+                                                        classifier=cls.classifier), actions=actions)

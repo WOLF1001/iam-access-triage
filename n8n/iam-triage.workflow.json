@@ -37,7 +37,16 @@
         "url": "http://triage:8765/api/triage",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
+        "jsonBody": "={{ JSON.stringify({ id: $json.id, event_id: $json.event_id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Triage-Token",
+              "value": "={{ $env.TRIAGE_API_TOKEN }}"
+            }
+          ]
+        },
         "options": {
           "timeout": 15000
         }
@@ -256,7 +265,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\nreturn done([reply]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\nreturn done([reply]);"
       },
       "name": "Reply with KB link",
       "type": "n8n-nodes-base.code",
@@ -269,7 +278,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\n// Дію вже виконав сервіс (симуляція, allowlist + read-side preconditions) — тут лише повідомлення.\nreturn done([reply]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\n// Дію вже виконав сервіс (симуляція, allowlist + read-side preconditions) — тут лише повідомлення.\nreturn done([reply]);"
       },
       "name": "Reply + allowlisted action",
       "type": "n8n-nodes-base.code",
@@ -282,7 +291,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nconst q = r.decisions.find(d => d.queue)?.queue ?? 'helpdesk';\nreturn done([reply, { api: 'chat.postMessage', channel: `#${q}`,\n  text: `Перенаправлено з IAM: «${r.redacted_text}» (тред ${ev.channel}/${ev.thread_ts})` }]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\nconst q = r.decisions.find(d => d.queue)?.queue ?? 'helpdesk';\nreturn done([reply, { api: 'chat.postMessage', channel: `#${q}`,\n  text: `Перенаправлено з IAM: «${r.redacted_text}» (тред ${ev.channel}/${ev.thread_ts})` }]);"
       },
       "name": "Forward to queue",
       "type": "n8n-nodes-base.code",
@@ -295,7 +304,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\n// Тред чекає відповіді автора; нове повідомлення в треді → цей самий воркфлоу з thread_context.\nreturn done([reply]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\n// Тред чекає відповіді автора; нове повідомлення в треді → цей самий воркфлоу з thread_context.\nreturn done([reply]);"
       },
       "name": "Ask clarifying questions",
       "type": "n8n-nodes-base.code",
@@ -308,7 +317,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nconst d = r.decisions.find(x => x.route === 'APPROVAL_GATED' || x.next_route === 'APPROVAL_GATED');\nconst approvers = d?.approvers ?? [];\nconst value = JSON.stringify({ event_id: ev.event_id, app: d?.primary_app, requester: r.requester, approvers });\nreturn done([reply, ...approvers.map(a => ({\n  api: 'chat.postMessage', channel: `DM:${a}`,\n  text: `Запит на доступ: ${d?.primary_app ?? '?'} для ${r.requester}`,\n  blocks: [\n    { type: 'section', text: { type: 'mrkdwn', text: `*${r.requester}* просить *${d?.primary_app ?? '?'}*\\n>${r.redacted_text}` } },\n    { type: 'actions', elements: [\n      { type: 'button', style: 'primary', text: { type: 'plain_text', text: 'Approve' }, action_id: 'iam_approve', value },\n      { type: 'button', style: 'danger',  text: { type: 'plain_text', text: 'Deny' },    action_id: 'iam_deny',    value },\n    ]},\n  ],\n}))]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\nconst d = r.decisions.find(x => x.route === 'APPROVAL_GATED' || x.next_route === 'APPROVAL_GATED');\nconst approvers = d?.approvers ?? [];\nconst value = JSON.stringify({ event_id: ev.event_id, app: d?.primary_app, requester: r.requester, approvers });\nreturn done([reply, ...approvers.map(a => ({\n  api: 'chat.postMessage', channel: `DM:${a}`,\n  text: `Запит на доступ: ${d?.primary_app ?? '?'} для ${r.requester}`,\n  blocks: [\n    { type: 'section', text: { type: 'mrkdwn', text: `*${r.requester}* просить *${d?.primary_app ?? '?'}*\\n>${r.redacted_text}` } },\n    { type: 'actions', elements: [\n      { type: 'button', style: 'primary', text: { type: 'plain_text', text: 'Approve' }, action_id: 'iam_approve', value },\n      { type: 'button', style: 'danger',  text: { type: 'plain_text', text: 'Deny' },    action_id: 'iam_deny',    value },\n    ]},\n  ],\n}))]);"
       },
       "name": "Request approval (Block Kit)",
       "type": "n8n-nodes-base.code",
@@ -321,7 +330,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'JSM: POST /rest/servicedeskapi/request', queue: 'iam-review', summary: r.redacted_text.slice(0, 120), description: r.internal_note },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: r.internal_note }]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'JSM: POST /rest/servicedeskapi/request', queue: 'iam-review', summary: r.redacted_text.slice(0, 120), description: r.internal_note },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: r.internal_note }]);"
       },
       "name": "Escalate to IAM engineer",
       "type": "n8n-nodes-base.code",
@@ -334,7 +343,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'chat.postMessage', channel: '#security', text: r.internal_note },\n  { api: 'PagerDuty Events v2: trigger', severity: 'critical', summary: `IAM triage: ${r.redacted_text.slice(0, 100)}` }]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\nreturn done([reply,\n  { api: 'chat.postMessage', channel: '#security', text: r.internal_note },\n  { api: 'PagerDuty Events v2: trigger', severity: 'critical', summary: `IAM triage: ${r.redacted_text.slice(0, 100)}` }]);"
       },
       "name": "Page security",
       "type": "n8n-nodes-base.code",
@@ -347,7 +356,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];\n\nreturn done([{ ...reply, text: 'Передав запит IAM-інженеру.' },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: `Невідомий маршрут від сервісу: ${r.route}` }]);"
+        "jsCode": "\nconst r = $input.first().json;\nconst ev = $('Normalize Slack event').first().json;\nconst reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };\nconst done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,\n  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again\n  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];\n\nreturn done([{ ...reply, text: 'Передав запит IAM-інженеру.' },\n  { api: 'chat.postMessage', channel: 'DM:iam-oncall', text: `Невідомий маршрут від сервісу: ${r.route}` }]);"
       },
       "name": "Unknown route → human",
       "type": "n8n-nodes-base.code",

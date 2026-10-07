@@ -210,6 +210,7 @@ FAKE_SECRETS = {
     "jwt": "eyJ" + "Q" * 12 + "." + "Q" * 12 + "." + "Q" * 12,
     "private_key": "-----BEGIN RSA PRIVATE KEY-----",
     "password_inline": "пароль: QQQQ-hunter2",
+    "password_prose": "пароль від тули Qwerty12345",
 }
 
 
@@ -353,3 +354,16 @@ class TestUserFacingDraft:
         for i, r in full_run.items():
             if r.overall_route != "AUTO_RESOLVE":
                 assert not re.search(r"(видав|додав|надав) (тобі )?доступ", r.draft.lower()), i
+
+
+def test_kb_markdown_articles_exist_in_kb_yaml():
+    """kb/*.md are the full texts; every article_id must exist in config/kb.yaml (and thus be syncable to Notion)."""
+    import pathlib
+    import yaml
+    root = pathlib.Path(__file__).resolve().parents[1] / "kb"
+    for md in root.glob("*.md"):
+        if md.name == "README.md":
+            continue
+        front = yaml.safe_load(md.read_text(encoding="utf-8").split("---")[1])
+        assert front["article_id"] == md.stem
+        assert front["article_id"] in KB["articles"], md.name

@@ -7,9 +7,9 @@
 | AUTO — бот робить сам | 1 | 1% |
 | DOCS — перенаправлення в документацію | 16 | 15% |
 | REROUTE — не IAM, інша черга | 10 | 9% |
-| NEED_INFO — уточнення | 27 | 25% |
-| APPROVAL — бот готує, людина апрувить | 18 | 17% |
-| HUMAN — рішення за IAM-інженером | 33 | 31% |
+| NEED_INFO — уточнення | 21 | 19% |
+| APPROVAL — бот готує, людина апрувить | 15 | 14% |
+| HUMAN — рішення за IAM-інженером | 42 | 39% |
 | SECURITY — інцидент / пейдж | 3 | 3% |
 
 | № | Звернення | Маршрут | Типи | Ключовий сигнал |
@@ -21,8 +21,8 @@
 | 5 | треба згенерити новий api-ключ до однієї ai-моделі, це для … | NEED_INFO | api_key_request | `unverified_approval_claim` (text) |
 | 6 | як отримати менеджерський ключ до стор-консолі одного з про… | DOCS_REDIRECT | how_to | тип `how_to` |
 | 7 | питання по лімітах notion api — чи треба нам апати тариф що… | DOCS_REDIRECT | policy_question | тип `policy_question` |
-| 8 | нам двом треба доступ в один креатив-тул, і ще в однієї кол… | NEED_INFO | access_request, login_diagnostic | `on_behalf` (text) |
-| 9 | треба інвайт у тестові білди мобільного застосунку (і ios і… | APPROVAL_GATED | access_request | тип `access_request` |
+| 8 | нам двом треба доступ в один креатив-тул, і ще в однієї кол… | HUMAN_REVIEW | access_request, login_diagnostic | `on_behalf` (text) |
+| 9 | треба інвайт у тестові білди мобільного застосунку (і ios і… | HUMAN_REVIEW | access_request | `prod_access` (catalog) |
 | 10 | дайте будь ласка доступ до тули для транскрибації дзвінків | APPROVAL_GATED | access_request | тип `access_request` |
 | 11 | мені прийшов інвайт у meta business, треба підтвердити мою … | APPROVAL_GATED | access_request | тип `access_request` |
 | 12 | хочу ввімкнути always-allow для mcp-конекторів у клоді, так… | HUMAN_REVIEW | security_policy_change | `security_policy_change` (text) |
@@ -30,7 +30,7 @@
 | 14 | а корп акаунт на дизайн-референс тулу ще живий? колись я йо… | HUMAN_REVIEW | access_request | `shared_credential` (text) |
 | 15 | клод-код вилітає, просить релогін через okta і не пускає. щ… | NEED_INFO | login_diagnostic | `diagnostic_inconclusive` (read) |
 | 16 | щось уперлась в ліміт, не розумію де саме. кажуть це bigque… | APPROVAL_GATED | limits_quota | тип `limits_quota` |
-| 17 | треба підняти ліміти клода 5 людям з команди під ai-відео. … | NEED_INFO | limits_quota | `on_behalf` (text) |
+| 17 | треба підняти ліміти клода 5 людям з команди під ai-відео. … | HUMAN_REVIEW | limits_quota | `on_behalf` (text) |
 | 18 | треба перегенерувати ключі, старі здається злиті. деталі в … | SECURITY_ESCALATION | secret_incident | `secret_compromise` (text) |
 | 19 | створила новий акаунт для роботи з рекламним кабінетом, тре… | APPROVAL_GATED | access_request | тип `access_request` |
 | 20 | підключаю asana до slack, а в дропдауні проєктів порожньо. … | HUMAN_REVIEW | integration_connector | `third_party_connector` (text) |
@@ -43,11 +43,11 @@
 | 27 | потрібен viewer-доступ до аналітики залучення (tiktok, один… | NEED_INFO | access_request | `missing_critical_data` (text) |
 | 28 | у нас закінчились кредити на ai-тулі і через це став дабінг… | REROUTE | billing_finance | `payment_action` (text) |
 | 29 | у мене не працює adobe creative cloud, щось з підпискою. і … | HUMAN_REVIEW | license_issue, access_request | `on_behalf` (text) |
-| 30 | дайте доступ до growthbook, колеги вже мають а я ні | APPROVAL_GATED | access_request | тип `access_request` |
+| 30 | дайте доступ до growthbook, колеги вже мають а я ні | HUMAN_REVIEW | access_request | `prod_access` (catalog) |
 | 31 | чому в мене ліміти на одній geminiі так швидко закінчуються… | APPROVAL_GATED | limits_quota | тип `limits_quota` |
 | 32 | асап!! видаліть будь ласка нотатку в 1password зі старим ap… | SECURITY_ESCALATION | secret_incident | `secret_compromise` (text) |
 | 33 | не можу зайти в airtable через okta, викидає помилку | NEED_INFO | login_diagnostic | `diagnostic_inconclusive` (read) |
-| 34 | мені потрібен менеджерський ключ до app store по продукту, … | APPROVAL_GATED | api_key_request | тип `api_key_request` |
+| 34 | мені потрібен менеджерський ключ до app store по продукту, … | HUMAN_REVIEW | api_key_request | `prod_access` (catalog) |
 | 35 | уперлись в квоту bigquery, треба підняти, аналітика стоїть | APPROVAL_GATED | limits_quota | тип `limits_quota` |
 | 36 | локалізаторам потрібен новий api-ключ до ai-моделі, зробіть… | NEED_INFO | api_key_request | `missing_critical_data` (text) |
 | 37 | як правильно підключити airtable до клода через персональни… | DOCS_REDIRECT | how_to | тип `how_to` |
@@ -70,7 +70,7 @@
 | 54 | нова команда, треба налаштувати менеджмент api-ключа Gemini… | APPROVAL_GATED | api_key_request | тип `api_key_request` |
 | 55 | хочу підняти собі ліміт у гпт, що для цього треба? лід має … | DOCS_REDIRECT | how_to | тип `how_to` |
 | 56 | чому у мене 2 аккаунта для sensor tower? і щось не можу зай… | HUMAN_REVIEW | login_diagnostic | `shared_credential` (text) |
-| 57 | прошу видати доступ до рекламного business manager моїй кол… | NEED_INFO | access_request | `financial_data` (text) |
+| 57 | прошу видати доступ до рекламного business manager моїй кол… | HUMAN_REVIEW | access_request | `financial_data` (text) |
 | 58 | заводимо нового підрядника по виробництву серіалів — треба … | HUMAN_REVIEW | onboarding | `external_party` (text) |
 | 59 | підключіть плз mcp-конектор нашої внутрішньої креатив-тули … | HUMAN_REVIEW | integration_connector | `third_party_connector` (text) |
 | 60 | треба порахувати кількість користувачів у слаці на всіх наш… | HUMAN_REVIEW | usage_report | `broad_scope` (text) |
@@ -78,7 +78,7 @@
 | 62 | треба api-ключ до ai-моделі під автоматизацію дубляжу | NEED_INFO | api_key_request | `missing_critical_data` (text) |
 | 63 | мені треба доступ до всіх наших market-intel/spy тул, по пі… | HUMAN_REVIEW | license_request | `broad_scope` (text) |
 | 64 | не можу залогінитись у тулу для лігал документів, чомусь не… | HUMAN_REVIEW | login_diagnostic | `shared_credential` (text) |
-| 65 | можна пошерити vault в 1password двом моїм колегам? | HUMAN_REVIEW | access_request | `critical_resource` (catalog) |
+| 65 | можна пошерити vault в 1password двом моїм колегам? | HUMAN_REVIEW | access_request | `on_behalf` (text) |
 | 66 | треба корпоративний apple id для testflight і дев-задач | HUMAN_REVIEW | unclear | `shared_credential` (text) |
 | 67 | поповніть extra usage на клоді будь ласка | REROUTE | billing_finance | `payment_action` (text) |
 | 68 | дайте мені перегляд (view) до внутрішнього проекту продукті… | APPROVAL_GATED | access_request | тип `access_request` |
@@ -97,12 +97,12 @@
 | 81 | можна виставити ліміт витрат на моєму api-ключі, щоб не пер… | NEED_INFO | api_key_request | `unknown_app` (catalog) |
 | 82 | не заходить у tableau, крутиться і все | NEED_INFO | login_diagnostic | `diagnostic_inconclusive` (read) |
 | 83 | треба токени до двох ai-моделей (gemini і claude api) | NEED_INFO | api_key_request | `missing_critical_data` (text) |
-| 84 | в колеги не працює доступ до tableau, можете глянути його п… | NEED_INFO | login_diagnostic | `on_behalf` (text) |
+| 84 | в колеги не працює доступ до tableau, можете глянути його п… | HUMAN_REVIEW | login_diagnostic | `on_behalf` (text) |
 | 85 | прийшов звіт від пентестерів, там High-знахідка по одному з… | SECURITY_ESCALATION | not_iam | `security_finding` (text) |
-| 86 | треба підняти ліміти клода 9 людям, список нижче | NEED_INFO | limits_quota | `on_behalf` (text) |
+| 86 | треба підняти ліміти клода 9 людям, список нижче | HUMAN_REVIEW | limits_quota | `on_behalf` (text) |
 | 87 | треба доступ до розділу диспутів у платіжці, на всіх спейсах | HUMAN_REVIEW | access_request | `broad_scope` (text) |
 | 88 | проходжу безпековий тест і там помилки в блоці про паролі/ф… | REROUTE | not_iam | тип `not_iam` |
-| 89 | дайте доступ до аналітичного середовища ще одному колезі | NEED_INFO | access_request | `on_behalf` (text) |
+| 89 | дайте доступ до аналітичного середовища ще одному колезі | HUMAN_REVIEW | access_request | `on_behalf` (text) |
 | 90 | можна підняти ліміт клода на нашому спільному командному ак… | HUMAN_REVIEW | limits_quota | `shared_credential` (text) |
 | 91 | треба доступ до корп vpn + інструкція як підключитись | AUTO_RESOLVE | access_request, how_to | тип `access_request`, дія `add_birthright_group` |
 | 92 | терміново заблокуйте всі доступи співробітнику — сьогодні о… | HUMAN_REVIEW | offboarding | `offboarding` (text) |

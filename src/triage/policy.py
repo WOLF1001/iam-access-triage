@@ -146,6 +146,15 @@ def _approvers(app_id: str | None, sig_names: set[str], ctx: ReadContext) -> lis
     return list(dict.fromkeys(out))
 
 
+def _priority(route: str, names: set[str], pol: dict) -> str:
+    """Queue priority from policy.yaml (first match wins). Affects SLA only, never the route or checks."""
+    for p in pol["priorities"]:
+        w = p["when"]
+        if not w or route in w.get("routes", []) or names & set(w.get("signals", [])):
+            return p["level"]
+    return "P3"
+
+
 def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: list[Signal],
            text_signals_full: list[Signal], ctx: ReadContext, missing: list[str],
            apps: list[str], has_thread: bool) -> Decision:
@@ -167,13 +176,15 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
     sigs += ctx.signals
     if p_app and catalog.get(p_app)["risk_tier"] == "critical" and sub.type in ACCESS_LIKE | {"invite_resend"}:
         sigs.append(Signal("critical_resource", "catalog", f"{p_app}: risk_tier=critical"))
+    if p_app and catalog.get(p_app).get("prod_impact") and sub.type in ACCESS_LIKE | {"invite_resend"}:
+        sigs.append(Signal("prod_access", "catalog", f"{p_app}: prod_impact=true"))
     if sub.type in NEEDS_APP and not p_app:
         sigs.append(Signal("unknown_app", "catalog", "жодна згадка не змаплена на каталог"))
     names = {s.name for s in sigs}
     if "offboarding" in names:   # "всі доступи" для offboarding — очікуваний скоуп, а не over-granting
         sigs = [s for s in sigs if s.name != "broad_scope"]
         names.discard("broad_scope")
-    if "on_behalf" in names and not ctx.subject_email:
+    if "on_behalf" in names and not ctx.subject_email and "список людей відсутній" not in missing:
         missing = missing + ["ім'я/email людини, для якої запит"]
     if missing:
         sigs.append(Signal("missing_critical_data", "text", "; ".join(missing)))
@@ -195,7 +206,7 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
 
     # --- 4. Hard rules: тільки вгору
     for rule in pol["hard_rules"]:
-        if rule["signal"] in names:
+        if rule["signal"] in names and sub.type not in rule.get("exempt_types", []):
             ev = next(s for s in sigs if s.name == rule["signal"])
             d.reasons.append({"signal": rule["signal"], "origin": ev.origin, "evidence": ev.evidence,
                               "min_route": rule["min_route"], "reason": rule["reason"]})
@@ -253,7 +264,9 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
         d.route = "NEED_INFO"
         if d.action != "readonly_diagnostic":
             d.action, d.action_done = None, False
-    if d.route == "NEED_INFO":
+    # Missing data on a HUMAN route: still ask the author right away, so the engineer gets a complete
+    # request instead of starting with the same clarification round (process waste #1, current-state.md §3).
+    if d.route == "NEED_INFO" or (d.route == "HUMAN_REVIEW" and names & {"missing_critical_data", "unknown_app"}):
         qs = [MISSING_Q.get(m, f"Уточни: {m}.") for m in missing]
         if "unknown_app" in names and MISSING_Q["конкретна система/модель не названа"] not in qs:
             qs.insert(0, "Яка саме система/тула (точна назва або посилання)?")
@@ -283,9 +296,6 @@ def decide(sub: SubRequest, sub_text: str, full_text: str, text_signals_sub: lis
     risk += sum(1 for n in names if n in {r["signal"] for r in pol["hard_rules"]})
     risk += sum(1 for n in names if n in pol["risk_modifiers"])
     d.risk_score = risk
-    if d.route == "SECURITY_ESCALATION" or "offboarding" in names:
-        d.priority = "P1"
-    elif "urgency" in names:
-        d.priority = "P2"
+    d.priority = _priority(d.route, names, pol)
     d.signals = sigs
     return d

@@ -77,28 +77,28 @@
   ]
  },
  "8": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "access_request",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     null
    ],
    [
     "login_diagnostic",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     null
    ]
   ]
  },
  "9": {
-  "route": "APPROVAL_GATED",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "access_request",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
     null,
     "app_store_connect"
    ]
@@ -182,12 +182,12 @@
   ]
  },
  "17": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "limits_quota",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     "claude_org"
    ]
   ]
@@ -330,18 +330,18 @@
    ],
    [
     "access_request",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     "adobe_cc"
    ]
   ]
  },
  "30": {
-  "route": "APPROVAL_GATED",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "access_request",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
     null,
     "growthbook"
    ]
@@ -381,11 +381,11 @@
   ]
  },
  "34": {
-  "route": "APPROVAL_GATED",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "api_key_request",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
     null,
     "app_store_connect"
    ]
@@ -652,12 +652,12 @@
   ]
  },
  "57": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "access_request",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     "meta_business_manager"
    ]
   ]
@@ -961,12 +961,12 @@
   ]
  },
  "84": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "login_diagnostic",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     "tableau"
    ]
   ]
@@ -983,12 +983,12 @@
   ]
  },
  "86": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "limits_quota",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     "claude_org"
    ]
   ]
@@ -1016,12 +1016,12 @@
   ]
  },
  "89": {
-  "route": "NEED_INFO",
+  "route": "HUMAN_REVIEW",
   "subs": [
    [
     "access_request",
-    "NEED_INFO",
-    "APPROVAL_GATED",
+    "HUMAN_REVIEW",
+    null,
     null
    ]
   ]

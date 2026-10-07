@@ -14,6 +14,7 @@
 #   birthright:     true → видається всім активним співробітникам без апруву
 #   cost:           true → платна ліцензія/usage → у ланцюг апруву додається бюджет-власник
 #   least_privilege_role: роль за замовчуванням, якщо скоуп не вказано
+#   prod_impact:    true → доступ впливає на прод (деплой, флаги, релізи) → сигнал prod_access → HUMAN-ONLY
 #   nuance:         практичні граблі (з досвіду / доків), які впливають на рішення
 #
 # Власники — вигадані ролі (dataset знеособлений).
@@ -305,6 +306,7 @@ apps:
     provisioning: okta_group
     approval: owner
     risk_tier: medium
+    prod_impact: true             # зміна тут = зміна прод-системи → prod_access → HUMAN-ONLY
     birthright: false
     cost: false
     owner: product-analytics-lead
@@ -483,6 +485,7 @@ apps:
     provisioning: app_api
     approval: owner
     risk_tier: high
+    prod_impact: true             # зміна тут = зміна прод-системи → prod_access → HUMAN-ONLY
     birthright: false
     cost: false
     owner: mobile-release-lead
@@ -502,6 +505,7 @@ apps:
     provisioning: app_api
     approval: owner
     risk_tier: high
+    prod_impact: true             # зміна тут = зміна прод-системи → prod_access → HUMAN-ONLY
     birthright: false
     cost: false
     owner: mobile-release-lead
@@ -554,6 +558,81 @@ apps:
     cost: false
     owner: support-lead
     kb: []
+
+  github:
+    name: GitHub (Enterprise)
+    aliases: [github, гітхаб, гитхаб, репозиторі]
+    category: engineering
+    sso: okta
+    read_side: "GitHub REST/GraphQL: org members, team membership, repo collaborators; audit log (Enterprise)"
+    act_side: "Okta group → GitHub team (SAML/SCIM); ролі repo — через team, не персонально"
+    provisioning: scim
+    approval: owner
+    risk_tier: high
+    prod_impact: true
+    birthright: false
+    cost: true
+    owner: engineering-lead
+    least_privilege_role: "read на конкретний repo через team"
+    kb: []
+    nuance:
+      - "Org owner ≈ адмін усього: секрети Actions, branch protection, деплой. Видача лише людиною, на строк."
+      - "Доступ на запис у repo з деплоєм через Actions = доступ до проду. TODO(verify): environment protection rules як контроль."
+
+  aws:
+    name: AWS
+    aliases: [aws, авс, амазон]
+    category: cloud
+    sso: okta
+    read_side: "IAM Identity Center: users, groups, permission set assignments по акаунтах; CloudTrail"
+    act_side: "Okta group → Identity Center group → permission set на конкретний акаунт"
+    provisioning: scim
+    approval: owner
+    risk_tier: critical
+    prod_impact: true
+    birthright: false
+    cost: false
+    owner: platform-owner
+    least_privilege_role: "ReadOnly permission set на non-prod акаунт"
+    kb: []
+    nuance:
+      - "Prod- і non-prod акаунти — різні рішення. Довгоживучі IAM users з access keys не видаємо — лише Identity Center (тимчасові креди)."
+
+  figma:
+    name: Figma
+    aliases: [figma, фігма, фигма]
+    category: creative
+    sso: okta
+    read_side: "Figma SCIM (Organization/Enterprise): users, seat type"
+    act_side: "SCIM: seat type viewer/editor"
+    provisioning: scim
+    approval: manager
+    risk_tier: low
+    birthright: false
+    cost: true
+    owner: design-lead
+    least_privilege_role: "viewer (безкоштовний)"
+    kb: []
+    nuance:
+      - "Editor seat — платний; «потрібен доступ до макету» найчастіше закривається viewer-ом."
+
+  amplitude:
+    name: Amplitude
+    aliases: [amplitude, амплітуд]
+    category: analytics
+    sso: okta
+    read_side: "Amplitude org members / project permissions; SCIM (TODO(verify) тариф)"
+    act_side: "Okta group → роль у проєкті"
+    provisioning: okta_group
+    approval: owner
+    risk_tier: medium
+    birthright: false
+    cost: true
+    owner: data-team-lead
+    least_privilege_role: "viewer на конкретний проєкт"
+    kb: []
+    nuance:
+      - "Події користувачів продукту можуть містити PII (user properties) → експорт / сирі події = pii_request, не просто доступ."
 
   hris:
     name: HRIS

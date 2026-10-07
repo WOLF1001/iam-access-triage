@@ -218,6 +218,15 @@ def check_birthright(ctx: ReadContext, app_id: str) -> None:
                 f"група {'в' if allowlisted else 'НЕ в'} allowlist бота")
 
 
+def check_sod(ctx: ReadContext, app_id: str) -> None:
+    """SoD: the requester must not be an approver of the resource they ask for (no self-approval)."""
+    role = catalog.get(app_id).get("owner")
+    holders = config.mock("owners")["roles"].get(role or "", [])
+    if ctx.requester_email and ctx.requester_email in holders:
+        ctx.add("role-directory", "lookup owner role", f"{ctx.requester_email} обіймає роль {role} — апрувер ресурсу {app_id}")
+        ctx.sig("sod_conflict", f"автор — апрувер ресурсу ({role}); самопогодження неможливе")
+
+
 def build(slack_id: str | None, thread: str | None, types: set[str], app_ids: list[str],
           text_signal_names: set[str], primary_app: str | None = None) -> ReadContext:
     ctx = ReadContext()
@@ -231,6 +240,8 @@ def build(slack_id: str | None, thread: str | None, types: set[str], app_ids: li
         check_invite(ctx, app_ids)
     if "access_request" in types and primary_app:
         check_birthright(ctx, primary_app)
+    if primary_app and types & {"access_request", "license_request", "api_key_request", "limits_quota", "invite_resend"}:
+        check_sod(ctx, primary_app)
     if "hris_bypass" in text_signal_names:
         ctx.add("hris", "GET /employees?start_date>=today-7",
                 "суб'єкта (нову людину) не можна знайти в HRIS — ім'я не вказане, запису немає; перевірити неможливо")

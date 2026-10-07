@@ -65,7 +65,8 @@ return [{ json: {
 triage = node("Triage service (policy)", "n8n-nodes-base.httpRequest", 4.2, [560, 300], {
     "method": "POST", "url": "http://triage:8765/api/triage",
     "sendBody": True, "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ id: $json.id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
+    "jsonBody": "={{ JSON.stringify({ id: $json.id, event_id: $json.event_id, text: $json.text, requester: $json.requester, thread: $json.thread }) }}",
+    "sendHeaders": True, "headerParameters": {"parameters": [{"name": "X-Triage-Token", "value": "={{ $env.TRIAGE_API_TOKEN }}"}]},
     "options": {"timeout": 15000}}, onError="continueErrorOutput")
 
 ROUTES = [("DOCS_REDIRECT", "DOCS"), ("AUTO_RESOLVE", "AUTO"), ("REROUTE", "REROUTE"), ("NEED_INFO", "NEED_INFO"),
@@ -83,7 +84,9 @@ COMMON = r"""
 const r = $input.first().json;
 const ev = $('Normalize Slack event').first().json;
 const reply = { api: 'chat.postMessage', channel: ev.channel, thread_ts: ev.thread_ts, text: r.draft };
-const done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id, outbox, act_log: r.actions } }];
+const done = (outbox) => [{ json: { route: r.route, dry_run: true, event_id: ev.event_id,
+  outbox: r.dedup?.replayed_event ? [] : outbox,          // Slack retry: already handled, post nothing again
+  replayed_event: !!r.dedup?.replayed_event, repeat_of: r.dedup?.repeat_of ?? null, act_log: r.actions } }];
 """
 
 BRANCH = {

@@ -107,8 +107,8 @@ hard_rules:
     min_route: HUMAN_REVIEW
     reason: "Підрядник/зовнішня сторона: потрібні договір, NDA, власник у компанії, строк дії доступу."
   - signal: financial_data
-    min_route: APPROVAL_GATED
-    reason: "Доступ до фінансових даних — апрув власника ресурсу обов'язковий."
+    min_route: HUMAN_REVIEW
+    reason: "Фінансові системи й дані (білінг, платежі, диспути, фін-показники) — HUMAN-ONLY: шахрайство, PCI-скоуп, відкликання не повертає бачене (zones.md §4.2, ADR-0003)."
   - signal: payment_action
     min_route: REROUTE
     reason: "Оплата/поповнення/карта — finance + бюджет-власник, не IAM."
@@ -116,8 +116,15 @@ hard_rules:
     min_route: APPROVAL_GATED
     reason: "'Лід в курсі' у тексті ≠ апрув. Апрув фіксується лише дією апрувера в системі."
   - signal: on_behalf
-    min_route: APPROVAL_GATED
-    reason: "Requester ≠ subject. Потрібна згода/апрув щодо суб'єкта доступу."
+    min_route: HUMAN_REVIEW
+    exempt_types: [how_to, policy_question, not_iam, billing_finance]   # без дії над доступом — нема чого видавати
+    reason: "Доступ для іншої людини — HUMAN-ONLY, навіть якщо автор — її менеджер: суб'єкт не просив сам → вектор соц. інженерії; потрібна згода суб'єкта (zones.md §6)."
+  - signal: prod_access
+    min_route: HUMAN_REVIEW
+    reason: "Prod (деплой, feature flags, store-консолі, прод-акаунти AWS/GitHub, прод-дані) — зміна системи, а не лише доступу; потрібен change-контроль (ISO A.8.31–8.32)."
+  - signal: sod_conflict
+    min_route: HUMAN_REVIEW
+    reason: "Конфлікт розподілу обов'язків: автор є апрувером цього ресурсу або просить роль, що погоджує власні дії. Самопогодження неможливе (ISO A.5.3)."
   - signal: approver_unavailable
     min_route: HUMAN_REVIEW
     reason: "Апрувер недоступний (за HRIS — відпустка). Делегат має бути визначений людиною, не ботом."
@@ -159,6 +166,32 @@ risk_modifiers:
     note: "Спроба продиктувати боту, як діяти ('не шли доки', 'просто видай')."
   cost_impact:
     effect: "потрібен бюджет-власник у ланцюгу апруву"
+  business_blocked:
+    effect: "priority → P2"
+    note: "«стоїть», «не можу працювати» — впливає лише на пріоритет у черзі, не на перевірки."
+
+# --- Пріоритет у черзі людини (ticket-triage). Впливає на SLA, НЕ на маршрут і перевірки.
+#     Перша відповідна умова згори вниз перемагає.
+priorities:
+  - level: P1
+    sla: "1 год"
+    when: {routes: [SECURITY_ESCALATION], signals: [offboarding, secret_compromise, secret_in_message, suspicious_auth_activity, security_finding]}
+  - level: P4
+    sla: "— (бот закриває сам)"
+    when: {routes: [DOCS_REDIRECT, REROUTE, AUTO_RESOLVE]}
+  - level: P2
+    sla: "4 год"
+    when: {signals: [urgency, business_blocked]}
+  - level: P3
+    sla: "1 робочий день"
+    when: {}          # за замовчуванням
+
+# --- Дедуплікація (ticket-triage). Стан — у сервісі (in-memory у прототипі).
+dedup:
+  event_window_hours: 24       # той самий Slack event_id (ретрай Slack) → той самий результат, без повторних дій
+  same_request_window_hours: 72   # той самий автор + тип + система → «повтор», без нового апруву
+  pattern_threshold: 3         # ≥3 різних автори з тим самим типом + системою за 7 днів → патерн: кандидат у KB / known issue
+  pattern_window_days: 7
 
 # --- AUTO_RESOLVE: allowlist. Усе, чого тут немає, — не авто. -----------------
 auto_allowlist:

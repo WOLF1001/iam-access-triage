@@ -23,7 +23,7 @@ LLM_SIGNALS = [
     "secret_compromise", "security_finding", "offboarding", "hris_bypass", "mirror_access", "broad_scope",
     "privileged_access", "credential_reset", "shared_credential", "pii_request", "security_policy_change",
     "third_party_connector", "external_party", "financial_data", "payment_action", "unverified_approval_claim",
-    "on_behalf", "urgency", "prompt_pressure", "cost_impact",
+    "on_behalf", "urgency", "prompt_pressure", "cost_impact", "prod_access", "sod_conflict",
 ]
 
 
@@ -68,7 +68,7 @@ TYPE_RULES: list[tuple[str, list[str]]] = [
     ("usage_report", [r"хто юзає", r"порахувати кількість", r"статус звільнення"]),
     ("offboarding", [r"останній день", r"заблокуйте всі доступи"]),
     ("onboarding", [r"нова людина", r"нового підрядника", r"заводимо нового"]),
-    ("credential_reset", [r"скинути пароль", r"налаштувати 2fa", r"налаштувати mfa", r"як налаштувати mfa"]),
+    ("credential_reset", [r"скин\w* пароль", r"скин\w* (mfa|2fa)", r"налаштувати 2fa", r"налаштувати mfa", r"як налаштувати mfa"]),
     ("security_policy_change", [r"always-allow"]),
     ("project_work", [r"міграці\w* домену", r"dmarc", r"на новий домен", r"сервісних пошт"]),
     ("how_to", [r"^як ", r"як мені", r"як правильно", r"як працює", r"як заходити", r"як підключити", r"як створити",
@@ -166,6 +166,12 @@ def _save_cache(cache: dict) -> None:
         print(f"WARN: кеш LLM не записано ({e}); результат використано без кешу", file=sys.stderr)
 
 
+def _prompt_version(prompt_file: str) -> str:
+    """File name + content hash: editing the prompt must invalidate cached LLM answers."""
+    body = (config.PROMPTS / prompt_file).read_bytes()
+    return f"{prompt_file}@{hashlib.sha256(body).hexdigest()[:8]}"
+
+
 def _cache_key(model: str, prompt_version: str, text: str, thread: str | None) -> str:
     return hashlib.sha256(f"{model}|{prompt_version}|{text}|{thread or ''}".encode()).hexdigest()[:24]
 
@@ -183,7 +189,7 @@ def _validate(raw: dict) -> Classification:
             summary=str(s.get("summary", ""))[:300], type=t,
             app_mentions=[str(a)[:60] for a in s.get("app_mentions", [])][:10],
             subject=s.get("subject") if s.get("subject") in ("self", "other", "multiple", "unknown") else "unknown",
-            requested_scope=s.get("requested_scope"),
+            requested_scope=str(s["requested_scope"])[:100] if isinstance(s.get("requested_scope"), str) else None,
             missing_info=[str(m)[:200] for m in s.get("missing_info", [])][:10],
             signals=sigs, confidence=max(0.0, min(conf, 1.0)),
         ))
@@ -195,7 +201,7 @@ def _validate(raw: dict) -> Classification:
 def classify_llm(text: str, thread: str | None = None, *, replay_only: bool = False,
                  prompt_file: str = "classify_v2.md") -> Classification:
     model = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5")
-    prompt_version = prompt_file
+    prompt_version = _prompt_version(prompt_file)
     key = _cache_key(model, prompt_version, text, thread)
     cache = _load_cache()
     if key in cache:
@@ -242,7 +248,7 @@ OLLAMA_SUFFIX = ("\n\n## Формат відповіді\nІнструменті
 
 def _ollama_key(text: str, thread: str | None, prompt_file: str) -> tuple[str, str]:
     model = os.environ.get("OLLAMA_MODEL", "qwen3:14b")
-    return model, _cache_key(f"ollama:{model}", prompt_file, text, thread)
+    return model, _cache_key(f"ollama:{model}", _prompt_version(prompt_file), text, thread)
 
 
 def classify_ollama(text: str, thread: str | None = None, *, prompt_file: str = "classify_v2.md") -> Classification:

@@ -17,6 +17,10 @@ PATTERNS: list[tuple[str, re.Pattern]] = [
     ("jwt", re.compile(r"eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}")),
     ("private_key", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("password_inline", re.compile(r"(?i)(?:пароль|password|pass|pwd)\s*[:=]\s*\S+")),
+    # password in prose: «пароль від тули Qwerty123», «password is Hunter2024!» — a token with letters AND digits
+    # within a few words after the keyword. Over-redaction is the safe side: it escalates to security.
+    ("password_prose", re.compile(r"(?i)(?:пароль|password)(?:\s+[^\s]+){0,3}?\s+(?:—\s+)?"
+                                  r"(?=[^\s@/]*\d)(?=[^\s@/]*[a-zа-яіїєґ])[^\s@/]{8,}")),
 ]
 
 

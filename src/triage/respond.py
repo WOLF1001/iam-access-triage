@@ -93,8 +93,9 @@ def draft_for(d: Decision) -> str:
         return f"Це не до IAM — цим займається {qq['name']} ({qq['channel']}). Я переслав туди твоє повідомлення з посиланням на цей тред."
     if d.route == "HUMAN_REVIEW":
         tail = (". " + reasons[0][0].upper() + reasons[0][1:]) if reasons else ""
+        ask = ("\nЩоб інженер міг одразу взятися, напиши тут:\n" + "\n".join(f"• {x}" for x in d.questions)) if d.questions else ""
         return f"Передав запит IAM-інженеру{tail}. Відповідь буде в цьому треді." + \
-               (f" Пріоритет: {d.priority}." if d.priority != "P3" else "")
+               (f" Пріоритет: {d.priority}." if d.priority != "P3" else "") + ask
     if d.route == "SECURITY_ESCALATION":
         names = {r["signal"] for r in d.reasons}
         if names & {"secret_compromise", "secret_in_message"}:
@@ -122,17 +123,62 @@ def compose(decisions: list[Decision]) -> str:
     return "\n\n".join(parts)
 
 
-def internal_note(decisions: list[Decision]) -> str | None:
-    lines = []
-    for d in decisions:
-        if d.route not in ("HUMAN_REVIEW", "SECURITY_ESCALATION", "APPROVAL_GATED"):
-            continue
-        lines.append(f"[{d.route} {d.priority}] {d.sub.summary}")
-        for r in d.reasons:
-            lines.append(f"  - {r['signal']} ({r['origin']}): {r['evidence']}")
+ASK = {
+    "APPROVAL_GATED": "Апрувер: погодити або відхилити конкретну зміну нижче. Після апруву бот виконає dry-run план і перевірить результат читанням.",
+    "HUMAN_REVIEW": "Вирішити: видати / звузити / відмовити — і виконати самому. Бот нічого не змінюватиме навіть після апруву (HUMAN-ONLY).",
+    "SECURITY_ESCALATION": "Security triage: оцінити інцидент і стримати (ротація, блокування). Бот нічого не змінював.",
+}
+
+
+ASK_BY_TYPE = {
+    "offboarding": "Підтвердити звільнення з HR (дата, людина) і виконати план відкликання вручну за dry-run планом нижче; "
+                   "ротацію секретів зі спільних vault-ів — власникам. Нічого не робити, доки HRIS не підтверджує.",
+    "data_export": "Перевірити правову підставу й мінімізацію даних; без них — відмова. Бот PII не вивантажує.",
+    "usage_report": "Перевірити, чи є підстава розкривати дані про інших людей; без неї — відмова.",
+    "integration_connector": "Security review конектора: які дані йдуть назовні, scope токенів, де зберігаються.",
+    "security_policy_change": "Рішення security щодо зміни org-політики; за замовчуванням — ні.",
+    "onboarding": "Дочекатися запису в HRIS і зібрати мінімальний набір під роль; «повний пакет» не видавати.",
+}
+
+
+def internal_note(decisions: list[Decision], *, requester: str | None = None, text: str | None = None,
+                  classifier: str | None = None) -> str | None:
+    """Human handoff in the format of templates/human-handoff.md (goes to JSM description and the engineer's DM)."""
+    from . import config
+    sla = {p["level"]: p["sla"] for p in config.policy()["priorities"]}
+    human = [d for d in decisions if d.route in ("HUMAN_REVIEW", "SECURITY_ESCALATION", "APPROVAL_GATED")]
+    if not human:
+        return None
+    top = max(human, key=lambda d: config.ROUTE_SEVERITY[d.route])
+    ctx = top.read
+    lines = [f"HANDOFF · {top.route} · {top.priority} (SLA {sla.get(top.priority, '?')})"]
+    if ctx:
+        who = ctx.requester_email or "не визначено"
+        state = ("верифікований, активний у HRIS" if ctx.requester_active else "верифікований, НЕ активний у HRIS") \
+            if ctx.requester_verified else "НЕ верифікований"
+        mgr = f"; менеджер {ctx.manager_email}" + ("" if ctx.manager_available else " (недоступний за HRIS)") if ctx.manager_email else ""
+        lines.append(f"Автор: {who} — {state}{mgr}")
+    if text:
+        lines.append(f"Звернення (після redaction): «{text}»")
+    for d in human:
+        lines += ["", f"[{d.route} {d.priority}] {d.sub.summary}",
+                  f"  Розбір: тип {d.sub.type} · система {d.primary_app or 'не визначена'} · суб'єкт {d.sub.subject} · "
+                  f"впевненість {d.sub.confidence:.2f}" + (f" · {classifier}" if classifier else "")]
+        why = [r for r in d.reasons if r.get("min_route") and config.ROUTE_SEVERITY[r["min_route"]] >= config.ROUTE_SEVERITY["APPROVAL_GATED"]]
+        if why:
+            lines.append("  Чому не авто:")
+            lines += [f"    - {r['signal']} [{r['origin']}] → {r['min_route']}: {r['reason']} ({r['evidence']})" for r in why]
+        if d.read and d.read.facts:
+            lines.append("  Факти з систем:")
+            lines += [f"    - {f.source} · {f.mechanism}: {f.statement}" for f in d.read.facts]
         if d.read and d.read.diagnosis:
-            lines += [f"  * діагноз: {x}" for x in d.read.diagnosis]
+            lines += [f"  Діагноз: {x}" for x in d.read.diagnosis]
         if d.read and d.read.dry_run_plan:
-            lines.append("  * dry-run план (НЕ виконано):")
-            lines += [f"      {p['system']}: {p['effect']}" for p in d.read.dry_run_plan]
-    return "\n".join(lines) or None
+            lines.append("  Dry-run план (НЕ виконано):")
+            lines += [f"    - {p['system']}: {p['would_call']} → {p['effect']}" for p in d.read.dry_run_plan]
+        if d.approvers:
+            lines.append(f"  Апрувери: {', '.join(d.approvers)}")
+        if d.questions:
+            lines.append("  Бот уже запитав автора: " + " | ".join(d.questions))
+    lines += ["", f"Що потрібно від тебе: {ASK_BY_TYPE.get(top.sub.type, ASK[top.route]) if top.route == 'HUMAN_REVIEW' else ASK[top.route]}"]
+    return "\n".join(lines)

@@ -1,0 +1,9 @@
+{
+  "_meta": {"system": "Role directory (mock)", "mechanism": "хто обіймає роль власника/апрувера ресурсу (у проді — HRIS job role або група в Okta)", "note": "ролі без запису = невідомо → SoD перевірка read-side неможлива для цього ресурсу"},
+  "roles": {
+    "data-team-lead": ["iryna.kravets@corp.example"],
+    "ai-platform-owner": ["ihor.kostenko@corp.example"],
+    "mobile-release-lead": ["vlad.moroz@corp.example"],
+    "engineering-lead": ["pavlo.danylenko@corp.example"]
+  }
+}

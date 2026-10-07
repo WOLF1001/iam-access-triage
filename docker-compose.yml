@@ -18,6 +18,7 @@ services:
       - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen3:14b}
       - OLLAMA_THINK=${OLLAMA_THINK:-}
       - KB_SYNC_TOKEN=${KB_SYNC_TOKEN:?задай KB_SYNC_TOKEN у .env}   # хто пише KB — пише відповіді бота
+      - TRIAGE_API_TOKEN=${TRIAGE_API_TOKEN:?задай TRIAGE_API_TOKEN у .env}   # requester приходить від викликача → лише автентифікований n8n
     volumes:
       - triage_kb:/app/runtime     # остання успішно синхронізована з Notion KB
     restart: unless-stopped
@@ -40,6 +41,7 @@ services:
       # воркфлоу бачить env n8n → тримати тут лише цей токен, без кредів на запис.
       - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
       - KB_SYNC_TOKEN=${KB_SYNC_TOKEN:?задай KB_SYNC_TOKEN у .env}
+      - TRIAGE_API_TOKEN=${TRIAGE_API_TOKEN:?задай TRIAGE_API_TOKEN у .env}
       - NOTION_KB_DATABASE_ID=${NOTION_KB_DATABASE_ID:-}   # ID бази «IAM KB» (не секрет)
     volumes:
       - n8n_data:/home/node/.n8n

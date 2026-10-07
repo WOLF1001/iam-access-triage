@@ -31,6 +31,8 @@
      - `external_party` — підрядник/зовнішня сторона
      - `financial_data`, `payment_action`, `cost_impact`
      - `security_policy_change`, `third_party_connector`, `security_finding`, `prompt_pressure`
+     - `prod_access` — прод: деплой, feature flags, релізи в сторах, прод-акаунти чи прод-дані
+     - `sod_conflict` — автор хоче сам погоджувати власні дії або поєднати несумісні ролі
    - `confidence` — 0..1, наскільки ти впевнений у `type`. Чесно: розмите звернення = низька впевненість.
 3. `is_iam` = false, якщо звернення взагалі не про доступи/ідентичність/секрети/ліцензії/ліміти SaaS (техніка, особисті повідомлення колезі тощо). Пентест і безпекові інциденти — `is_iam` може бути false, але сигнал `security_finding` обов'язковий.
 
